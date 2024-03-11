@@ -1,0 +1,7 @@
+.signalsDiv {
+  padding-top: 1%;
+  display: grid;
+  row-gap: 10px;
+  column-gap: 10px;
+  grid-template-columns: auto auto auto;
+}

@@ -1,0 +1,5 @@
+.test {
+    display: grid;
+    place-items: center;
+    row-gap: 5px;
+}
