@@ -1,0 +1,16 @@
+from ContinuousSignal import ContinuousSignal
+
+
+class TriangularWave(ContinuousSignal):
+    def __init__(self, A, T, t1, d, kw, f, bins=None):
+        super().__init__(A, t1, d, f, bins)
+        self.kw = kw
+        self.T = T
+
+    def calculate_data(self, t):
+        t = (t - self.t1) % self.T
+        if t < self.kw:
+            return (2 * self.A / self.kw) * t - self.A
+        else:
+            return (-2 * self.A / (self.T - self.kw)) * t + 3 * self.A
+
