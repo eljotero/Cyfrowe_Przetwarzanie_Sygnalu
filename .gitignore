@@ -299,4 +299,4 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
-/backend/.idea
+backend/.idea
