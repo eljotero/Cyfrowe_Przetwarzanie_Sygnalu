@@ -4,8 +4,8 @@ from DiscreteSignal import DiscreteSignal
 
 
 class UnitImpulse(DiscreteSignal):
-    def __init__(self, A, ns, n1, l, f, bins=None):
-        super().__init__(A, f, n1, l, bins=bins)
+    def __init__(self, A, ns, n1, l, f, bins=None, signal_type=None):
+        super().__init__(A, f, n1, l, bins=bins, signal_type=signal_type)
         self.l = l
         self.f = f
         self.ns = ns

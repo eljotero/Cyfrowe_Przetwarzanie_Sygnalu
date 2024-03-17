@@ -2,8 +2,8 @@ from ContinuousSignal import ContinuousSignal
 
 
 class UnitStep(ContinuousSignal):
-    def __init__(self, A, t1, d, ts, f, bins=None):
-        super().__init__(A, t1, d, f, bins)
+    def __init__(self, A, t1, d, ts, f, bins=None, signal_type=None):
+        super().__init__(A, t1, d, f, bins, signal_type)
         self.ts = ts
 
     def calculate_data(self, t):
