@@ -8,8 +8,7 @@ class TriangularWave(ContinuousSignal):
         self.T = T
 
     def calculate_data(self, t):
-        t = (t - self.t1) % self.T
-        if t < self.kw:
+        if (t - self.t1) % self.T < self.kw:
             return (2 * self.A / self.kw) * t - self.A
         else:
             return (-2 * self.A / (self.T - self.kw)) * t + 3 * self.A

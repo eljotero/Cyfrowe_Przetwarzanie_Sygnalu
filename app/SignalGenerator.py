@@ -29,9 +29,7 @@ class SignalGenerator:
             t = self.t1 + i / self.f
             self.data.append(self.calculate_data(t))
             self.indexes.append(t)
-        self.generate_chart()
-        self.generate_bar_chart()
-        return self.calculate_values()
+        return self.calculate_values(), self.generate_chart(), self.generate_bar_chart()
 
     def calculate_data(self, t):
         raise NotImplementedError("Metoda calculate_data() musi być zaimplementowana w klasie potomnej.")
@@ -40,12 +38,16 @@ class SignalGenerator:
         raise NotImplementedError("Metoda calculate_values() musi być zaimplementowana w klasie potomnej.")
 
     def generate_chart(self):
+        plt.clf()
         plt.plot(self.indexes, self.data)
-        plt.show()
+        plt.savefig('chart.png')
+        return plt
 
     def generate_bar_chart(self):
+        plt.clf()
         plt.hist(self.data, bins=self.bins)
-        plt.show()
+        plt.savefig('histogram.png')
+        return plt
 
     def add(self, second_signal):
         if len(self.data) != len(second_signal.data):
