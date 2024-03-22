@@ -30,5 +30,13 @@ class ImpulseNoise(DiscreteSignal):
         super().calculate_values()
 
     def generate_chart(self):
+        plt.clf()
         plt.scatter(self.indexes, self.data)
-        plt.show()
+        plt.savefig('chart.png')
+        return plt
+
+    def generate_bar_chart(self):
+        plt.clf()
+        plt.hist(self.data, bins=self.bins)
+        plt.savefig('histogram.png')
+        return plt

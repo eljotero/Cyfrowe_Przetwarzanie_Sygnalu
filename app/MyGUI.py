@@ -52,12 +52,12 @@ class MyGUI(QMainWindow):
         self.signal_classes = {
             1: UniformNoise,
             2: GaussianNoise,
-            3: FullWave,
+            3: SinusoidalSignal,
             4: HalfWave,
-            5: SinusoidalSignal,
+            5: FullWave,
             6: SquareWave,
-            7: TriangularWave,
-            8: SymmetricalSquareWave,
+            7: SymmetricalSquareWave,
+            8: TriangularWave,
             9: UnitStep,
             10: UnitImpulse,
             11: ImpulseNoise
@@ -101,9 +101,13 @@ class MyGUI(QMainWindow):
             line_edits = self.combobox_mapping_line_edit[self.comboBox.currentIndex()]
             if all([line_edit.text() for line_edit in line_edits]):
                 SignalClass = self.signal_classes[self.comboBox.currentIndex()]
+                print(SignalClass)
                 signal_type = self.comboBox.currentIndex()
-                params = {self.mapping_line_edit_params[line_edit.objectName()]: int(line_edit.text()) for line_edit in
-                          line_edits}
+                params = {
+                    self.mapping_line_edit_params[line_edit.objectName()]:
+                        float(line_edit.text()) if line_edit.objectName() == "kw_line_edit" else int(line_edit.text())
+                    for line_edit in line_edits
+                }
                 params['signal_type'] = signal_type
                 signal = SignalClass(**params)
                 title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()

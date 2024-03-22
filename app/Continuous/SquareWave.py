@@ -1,3 +1,5 @@
+import math
+
 from ContinuousSignal import ContinuousSignal
 
 
@@ -8,7 +10,8 @@ class SquareWave(ContinuousSignal):
         self.kw = kw
 
     def calculate_data(self, t):
-        if (t - self.t1) % self.T < self.kw:
+        k = math.floor((t - self.t1) / self.T)
+        if k * self.T + self.t1 <= t < self.kw * self.T + k * self.T + self.t1:
             return self.A
-        else:
+        elif self.kw * self.T - k * self.T + self.t1 <= t < self.T + k * self.T + self.t1:
             return 0

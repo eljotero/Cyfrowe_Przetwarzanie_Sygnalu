@@ -14,7 +14,7 @@ class UnitImpulse(DiscreteSignal):
     def generate_data(self):
         for i in range(self.l * self.f):
             t = self.n1 + i / self.f
-            if t == self.ns:
+            if i == self.ns:
                 self.data.append(1)
             else:
                 self.data.append(0)
