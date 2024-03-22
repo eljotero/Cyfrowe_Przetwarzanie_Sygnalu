@@ -19,13 +19,16 @@ class UnitImpulse(DiscreteSignal):
             else:
                 self.data.append(0)
             self.indexes.append(t)
-        self.generate_chart()
-        self.generate_bar_chart()
+        return self.calculate_values(), self.generate_chart(), self.generate_bar_chart()
 
     def generate_chart(self):
+        plt.clf()
         plt.scatter(self.indexes, self.data)
-        plt.show()
+        plt.savefig('chart.png')
+        return plt
 
     def generate_bar_chart(self):
+        plt.clf()
         plt.hist(self.data, bins=self.bins)
-        plt.show()
+        plt.savefig('histogram.png')
+        return plt

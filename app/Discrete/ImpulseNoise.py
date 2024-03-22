@@ -13,6 +13,13 @@ class ImpulseNoise(DiscreteSignal):
         self.f = f
         self.p = p / 100
 
+    def generate_data(self):
+        for i in range(self.d * self.f):
+            t = self.t1 + i / self.f
+            self.data.append(self.calculate_data(t))
+            self.indexes.append(t)
+        return self.calculate_values(), self.generate_chart(), self.generate_bar_chart()
+
     def calculate_data(self, t):
         if self.p > np.random.rand():
             return self.A
