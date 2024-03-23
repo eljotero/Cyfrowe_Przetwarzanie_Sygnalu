@@ -12,7 +12,7 @@ from Continuous.SymmetricalSquareWave import SymmetricalSquareWave
 from Continuous.UnitStep import UnitStep
 from Discrete.UnitImpulse import UnitImpulse
 from Discrete.ImpulseNoise import ImpulseNoise
-from SignalFromFile import SignalFromFile
+from Signal import Signal
 from DataGUI import DataGui
 
 
@@ -101,7 +101,6 @@ class MyGUI(QMainWindow):
             line_edits = self.combobox_mapping_line_edit[self.comboBox.currentIndex()]
             if all([line_edit.text() for line_edit in line_edits]):
                 SignalClass = self.signal_classes[self.comboBox.currentIndex()]
-                print(SignalClass)
                 signal_type = self.comboBox.currentIndex()
                 params = {
                     self.mapping_line_edit_params[line_edit.objectName()]:
@@ -141,10 +140,10 @@ class MyGUI(QMainWindow):
         if self.signalsComboBox.currentIndex() != 0 and self.signalsComboBox2.currentIndex() != 0:
             signal1 = self.signals_objects[self.signalsComboBox.currentIndex() - 1]
             signal2 = self.signals_objects[self.signalsComboBox2.currentIndex() - 1]
-            op_signal_1 = SignalFromFile(signal1.t1, signal1.f, signal1.data, signal1.indexes, signal1.type)
-            op_signal_2 = SignalFromFile(signal2.t1, signal2.f, signal2.data, signal2.indexes, signal2.type)
+            op_signal_1 = Signal(signal1.t1, signal1.f, signal1.data, signal1.indexes, signal1.type)
+            op_signal_2 = Signal(signal2.t1, signal2.f, signal2.data, signal2.indexes, signal2.type)
             if signal1.data.__len__() != signal2.data.__len__():
-                QMessageBox.warning(self, "Warning", "Signals have different length.")
+                QMessageBox.warning(self, "Warning", "Sygnaly musza byc tej samej dlugosci.")
                 return
             else:
                 if self.operationComboBox.currentIndex() == 1:
@@ -161,12 +160,14 @@ class MyGUI(QMainWindow):
                 self.signalsComboBox2.addItem((self.chart_windows.__len__() + 1).__str__())
                 self.show_data_window(title, None, result_signal)
                 self.signals_objects.append(result_signal)
+        else:
+            QMessageBox.warning(self, "Warning", "Trzeba wybrac dwa sygnaly.")
 
     def read_from_file(self):
         fname = QFileDialog.getOpenFileName(self, 'Open file', 'c:\\', "Binary files (*.bin)")
         if fname:
             try:
-                signal = SignalFromFile.load_from_binary_file(fname[0])
+                signal = Signal.load_from_binary_file(fname[0])
                 title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
                 self.show_data_window(title, None, signal)
                 self.signals_objects.append(signal)

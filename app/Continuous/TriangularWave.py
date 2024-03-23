@@ -15,3 +15,5 @@ class TriangularWave(ContinuousSignal):
             return (self.A / (self.kw * self.T)) * (t - (k * self.T) - self.t1)
         elif self.kw * self.T + self.t1 + k * self.T <= t < self.T + k * self.T + self.t1:
             return (-self.A / (self.T * (1 - self.kw))) * (t - (k * self.T) - self.t1)
+        else:
+            return 0

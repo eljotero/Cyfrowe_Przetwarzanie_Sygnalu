@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
-class SignalFromFile:
+class Signal:
     def __init__(self, t1, f, data, indexes, type=None):
         self.t1 = t1
         self.f = f
@@ -28,7 +28,7 @@ class SignalFromFile:
             num_samples = struct.unpack('<i', file.read(4))[0]
             data = [struct.unpack('<d', file.read(8))[0] for _ in range(num_samples)]
             indexes = np.array([t1 + i / f for i in range(len(data))])
-            return SignalFromFile(t1, f, data, indexes, type)
+            return Signal(t1, f, data, indexes, type)
 
     def save_to_binary_file(self, filename):
         with open(filename, 'wb') as file:
@@ -45,7 +45,7 @@ class SignalFromFile:
     def add(self, second_signal):
         if len(self.data) != len(second_signal.data):
             raise ValueError("Dlugosci sygnalow nie są rowne.")
-        result_signal = SignalFromFile(self.t1, self.f, self.data, self.indexes)
+        result_signal = Signal(self.t1, self.f, self.data, self.indexes)
         for i in range(len(self.data)):
             result_signal.data[i] = self.data[i] + second_signal.data[i]
         return result_signal
@@ -53,7 +53,7 @@ class SignalFromFile:
     def subtract(self, second_signal):
         if len(self.data) != len(second_signal.data):
             raise ValueError("Dlugosci sygnalow nie są rowne.")
-        result_signal = SignalFromFile(self.t1, self.f, self.data, self.indexes)
+        result_signal = Signal(self.t1, self.f, self.data, self.indexes)
         for i in range(len(self.data)):
             result_signal.data[i] = self.data[i] - second_signal.data[i]
         return result_signal
@@ -61,7 +61,7 @@ class SignalFromFile:
     def multiply(self, second_signal):
         if len(self.data) != len(second_signal.data):
             raise ValueError("Dlugosci sygnalow nie są rowne.")
-        result_signal = SignalFromFile(self.t1, self.f, self.data, self.indexes)
+        result_signal = Signal(self.t1, self.f, self.data, self.indexes)
         for i in range(len(self.data)):
             result_signal.data[i] = self.data[i] * second_signal.data[i]
         return result_signal
@@ -69,7 +69,7 @@ class SignalFromFile:
     def divide(self, second_signal):
         if len(self.data) != len(second_signal.data):
             raise ValueError("Dlugosci sygnalow nie są rowne.")
-        result_signal = SignalFromFile(self.t1, self.f, self.data, self.indexes)
+        result_signal = Signal(self.t1, self.f, self.data, self.indexes)
         for i in range(len(self.data)):
             result_signal.data[i] = self.data[i] / second_signal.data[i]
         return result_signal
@@ -85,6 +85,6 @@ class SignalFromFile:
 
     def generate_bar_chart(self):
         plt.clf()
-        plt.hist(self.data, bins=10)
+        plt.hist(self.data, bins=10, rwidth=0.9)
         plt.savefig('histogram.png')
         return plt

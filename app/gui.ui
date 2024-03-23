@@ -17,8 +17,8 @@
    <widget class="QWidget" name="formLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>20</y>
+      <x>380</x>
+      <y>10</y>
       <width>171</width>
       <height>321</height>
      </rect>
@@ -186,22 +186,29 @@
       </widget>
      </item>
      <item row="13" column="1">
-      <widget class="QLineEdit" name="bins_line_edit"/>
+      <widget class="QLineEdit" name="bins_line_edit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
    <widget class="QComboBox" name="comboBox">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>20</y>
+      <x>50</x>
+      <y>60</y>
       <width>231</width>
       <height>51</height>
      </rect>
     </property>
+    <property name="currentText">
+     <string>Wybierz rodzaj sygnału</string>
+    </property>
     <item>
      <property name="text">
-      <string/>
+      <string>Wybierz rodzaj sygnału</string>
      </property>
     </item>
     <item>
@@ -263,28 +270,28 @@
    <widget class="QPushButton" name="generateButton">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>10</y>
+      <x>680</x>
+      <y>40</y>
       <width>221</width>
       <height>101</height>
      </rect>
     </property>
     <property name="text">
-     <string>Wygeneruj</string>
+     <string>Wygeneruj sygnał</string>
     </property>
    </widget>
    <widget class="QComboBox" name="operationComboBox">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>360</y>
+      <x>20</x>
+      <y>400</y>
       <width>261</width>
       <height>91</height>
      </rect>
     </property>
     <item>
      <property name="text">
-      <string/>
+      <string>Wybierz operację</string>
      </property>
     </item>
     <item>
@@ -311,23 +318,23 @@
    <widget class="QComboBox" name="signalsComboBox">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>360</y>
+      <x>340</x>
+      <y>400</y>
       <width>261</width>
       <height>91</height>
      </rect>
     </property>
     <item>
      <property name="text">
-      <string/>
+      <string>Wybierz id sygnału</string>
      </property>
     </item>
    </widget>
    <widget class="QPushButton" name="operationButton">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>490</y>
+      <x>410</x>
+      <y>540</y>
       <width>211</width>
       <height>131</height>
      </rect>
@@ -339,29 +346,29 @@
    <widget class="QComboBox" name="signalsComboBox2">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>360</y>
+      <x>670</x>
+      <y>400</y>
       <width>261</width>
       <height>91</height>
      </rect>
     </property>
     <item>
      <property name="text">
-      <string/>
+      <string>Wybierz id sygnału</string>
      </property>
     </item>
    </widget>
    <widget class="QPushButton" name="readFromFileButton">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>170</y>
+      <x>680</x>
+      <y>200</y>
       <width>221</width>
       <height>101</height>
      </rect>
     </property>
     <property name="text">
-     <string>Wczytaj z pliku</string>
+     <string>Wczytaj sygnał z pliku</string>
     </property>
    </widget>
   </widget>

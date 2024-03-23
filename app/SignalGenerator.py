@@ -50,7 +50,7 @@ class SignalGenerator:
 
     def generate_bar_chart(self):
         plt.clf()
-        plt.hist(self.data, bins=self.bins)
+        plt.hist(self.data, bins=self.bins, rwidth=0.9)
         plt.savefig('histogram.png')
         return plt
 
