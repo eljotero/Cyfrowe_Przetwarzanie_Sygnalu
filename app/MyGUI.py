@@ -104,7 +104,7 @@ class MyGUI(QMainWindow):
                 signal_type = self.comboBox.currentIndex()
                 params = {
                     self.mapping_line_edit_params[line_edit.objectName()]:
-                        float(line_edit.text()) if line_edit.objectName() == "kw_line_edit" else int(line_edit.text())
+                        int(line_edit.text()) if line_edit.objectName() == "bins_line_edit" else float(line_edit.text())
                     for line_edit in line_edits
                 }
                 params['signal_type'] = signal_type
@@ -142,7 +142,7 @@ class MyGUI(QMainWindow):
             signal2 = self.signals_objects[self.signalsComboBox2.currentIndex() - 1]
             op_signal_1 = Signal(signal1.t1, signal1.f, signal1.data, signal1.indexes, signal1.type)
             op_signal_2 = Signal(signal2.t1, signal2.f, signal2.data, signal2.indexes, signal2.type)
-            if signal1.data.__len__() != signal2.data.__len__():
+            if len(signal1.data) != len(signal2.data):
                 QMessageBox.warning(self, "Warning", "Sygnaly musza byc tej samej dlugosci.")
                 return
             else:
