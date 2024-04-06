@@ -45,33 +45,33 @@ class Signal:
     def add(self, second_signal):
         if len(self.data) != len(second_signal.data):
             raise ValueError("Dlugosci sygnalow nie są rowne.")
-        result_signal = Signal(self.t1, self.f, self.data, self.indexes)
-        for i in range(len(self.data)):
-            result_signal.data[i] = self.data[i] + second_signal.data[i]
-        return result_signal
+        data = [a + b for a, b in zip(self.data, second_signal.data)]
+        indexes = np.array([self.t1 + i / self.f for i in range(len(data))])
+        result_singal = Signal(self.t1, self.f, data, indexes)
+        return result_singal
 
     def subtract(self, second_signal):
         if len(self.data) != len(second_signal.data):
             raise ValueError("Dlugosci sygnalow nie są rowne.")
-        result_signal = Signal(self.t1, self.f, self.data, self.indexes)
-        for i in range(len(self.data)):
-            result_signal.data[i] = self.data[i] - second_signal.data[i]
+        data = [a - b for a, b in zip(self.data, second_signal.data)]
+        indexes = np.array([self.t1 + i / self.f for i in range(len(data))])
+        result_signal = Signal(self.t1, self.f, data, indexes)
         return result_signal
 
     def multiply(self, second_signal):
         if len(self.data) != len(second_signal.data):
             raise ValueError("Dlugosci sygnalow nie są rowne.")
-        result_signal = Signal(self.t1, self.f, self.data, self.indexes)
-        for i in range(len(self.data)):
-            result_signal.data[i] = self.data[i] * second_signal.data[i]
+        data = [a * b for a, b in zip(self.data, second_signal.data)]
+        indexes = np.array([self.t1 + i / self.f for i in range(len(data))])
+        result_signal = Signal(self.t1, self.f, data, indexes)
         return result_signal
 
     def divide(self, second_signal):
         if len(self.data) != len(second_signal.data):
             raise ValueError("Dlugosci sygnalow nie są rowne.")
-        result_signal = Signal(self.t1, self.f, self.data, self.indexes)
-        for i in range(len(self.data)):
-            result_signal.data[i] = self.data[i] / second_signal.data[i]
+        data = [a / b if b != 0 else 0 for a, b in zip(self.data, second_signal.data)]
+        indexes = np.array([self.t1 + i / self.f for i in range(len(data))])
+        result_signal = Signal(self.t1, self.f, data, indexes)
         return result_signal
 
     def generate_data(self):

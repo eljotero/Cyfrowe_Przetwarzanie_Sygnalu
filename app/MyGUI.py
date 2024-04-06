@@ -104,17 +104,17 @@ class MyGUI(QMainWindow):
                 signal_type = self.comboBox.currentIndex()
                 params = {
                     self.mapping_line_edit_params[line_edit.objectName()]:
-                        float(line_edit.text()) if line_edit.objectName() == "kw_line_edit" else int(line_edit.text())
+                        int(line_edit.text()) if line_edit.objectName() == "bins_line_edit" else float(line_edit.text())
                     for line_edit in line_edits
                 }
                 params['signal_type'] = signal_type
                 signal = SignalClass(**params)
-                title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
+                title = 'ID: ' + str((len(self.chart_windows) + 1))
                 values, chart1, chart2 = signal.generate_data()
                 self.signals_objects.append(signal)
                 self.show_data_window(title, values, signal)
-                self.signalsComboBox.addItem((self.chart_windows.__len__()).__str__())
-                self.signalsComboBox2.addItem((self.chart_windows.__len__()).__str__())
+                self.signalsComboBox.addItem((str(len(self.chart_windows))))
+                self.signalsComboBox2.addItem((str(len(self.chart_windows))))
             else:
                 QMessageBox.warning(self, "Warning", "Some fields are empty.")
             return
@@ -142,7 +142,7 @@ class MyGUI(QMainWindow):
             signal2 = self.signals_objects[self.signalsComboBox2.currentIndex() - 1]
             op_signal_1 = Signal(signal1.t1, signal1.f, signal1.data, signal1.indexes, signal1.type)
             op_signal_2 = Signal(signal2.t1, signal2.f, signal2.data, signal2.indexes, signal2.type)
-            if signal1.data.__len__() != signal2.data.__len__():
+            if len(signal1.data) != len(signal2.data):
                 QMessageBox.warning(self, "Warning", "Sygnaly musza byc tej samej dlugosci.")
                 return
             else:
