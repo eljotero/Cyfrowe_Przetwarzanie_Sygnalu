@@ -17,7 +17,7 @@
    <widget class="QWidget" name="formLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>280</x>
       <y>10</y>
       <width>171</width>
       <height>321</height>
@@ -197,8 +197,8 @@
    <widget class="QComboBox" name="comboBox">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>60</y>
+      <x>10</x>
+      <y>30</y>
       <width>231</width>
       <height>51</height>
      </rect>
@@ -270,10 +270,10 @@
    <widget class="QPushButton" name="generateButton">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>40</y>
-      <width>221</width>
-      <height>101</height>
+      <x>610</x>
+      <y>20</y>
+      <width>191</width>
+      <height>81</height>
      </rect>
     </property>
     <property name="text">
@@ -283,10 +283,10 @@
    <widget class="QComboBox" name="operationComboBox">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>400</y>
-      <width>261</width>
-      <height>91</height>
+      <x>70</x>
+      <y>370</y>
+      <width>141</width>
+      <height>51</height>
      </rect>
     </property>
     <item>
@@ -318,10 +318,10 @@
    <widget class="QComboBox" name="signalsComboBox">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>400</y>
-      <width>261</width>
-      <height>91</height>
+      <x>290</x>
+      <y>370</y>
+      <width>141</width>
+      <height>51</height>
      </rect>
     </property>
     <item>
@@ -333,10 +333,10 @@
    <widget class="QPushButton" name="operationButton">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>540</y>
-      <width>211</width>
-      <height>131</height>
+      <x>690</x>
+      <y>370</y>
+      <width>141</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -346,10 +346,10 @@
    <widget class="QComboBox" name="signalsComboBox2">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>400</y>
-      <width>261</width>
-      <height>91</height>
+      <x>510</x>
+      <y>370</y>
+      <width>141</width>
+      <height>51</height>
      </rect>
     </property>
     <item>
@@ -361,14 +361,287 @@
    <widget class="QPushButton" name="readFromFileButton">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>200</y>
-      <width>221</width>
-      <height>101</height>
+      <x>610</x>
+      <y>140</y>
+      <width>191</width>
+      <height>81</height>
      </rect>
     </property>
     <property name="text">
      <string>Wczytaj sygnał z pliku</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="samplingComboBox">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>440</y>
+      <width>141</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Wybierz id sygnału</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="samplingText">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>450</y>
+      <width>81</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Próbkowanie</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="samplingRate_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>460</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_13">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>460</y>
+      <width>151</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Częstotliwość próbkowania</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="sampleButton">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>450</y>
+      <width>141</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Spróbkuj sygnał</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_14">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>520</y>
+      <width>71</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Kwantyzacja</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="quantizeComboBox">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>510</y>
+      <width>161</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Wybierz rodzaj kwantyzacji</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Kwantyzacja równomierna z obcięciem</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Kwantyzacja równomierna z zaokrąglaniem</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="num_level_label">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>530</y>
+      <width>141</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Liczba poziomów kwantyzacji</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="num_level_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>530</y>
+      <width>113</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="quantizeButton">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>520</y>
+      <width>141</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Wykonaj kwantyzację</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>530</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Wybierz spróbkowany sygnał</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="quantizeSignalComboBox">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>530</y>
+      <width>151</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Wybierz id sygnału</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="reconstructionButton">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>640</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Rekonstruuj sygnał</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>600</y>
+      <width>121</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Rekonstrukcja sygnału</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="reconstructionTypeComboBox">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>600</y>
+      <width>151</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Ekstrapolacja zerowego rzędu</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Interpolacja pierwszego rzędu</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Rekonstrukcja w oparciu o funkcję sinc</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_17">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>600</y>
+      <width>161</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Wybierz spróbkowany sygnał</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="reconstructionSignalComboBox">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>600</y>
+      <width>151</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Wybierz id sygnału</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_18">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>600</y>
+      <width>171</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Wartość t dla funkcji sinc</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="sinc_t_line_edit">
+    <property name="geometry">
+     <rect>
+      <x>760</x>
+      <y>600</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
     </property>
    </widget>
   </widget>

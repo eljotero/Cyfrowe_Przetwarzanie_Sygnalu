@@ -1,7 +1,10 @@
+import math
 import struct
 
 import numpy as np
 from matplotlib import pyplot as plt
+
+from SampledSignal import SampledSignal
 
 
 class Signal:
@@ -74,6 +77,23 @@ class Signal:
             result_signal.data[i] = self.data[i] / second_signal.data[i]
         return result_signal
 
+    def sample(self, rate):
+        sample_step = int(self.f / rate)
+        data = self.data[::sample_step]
+        indexes = np.array([self.t1 + i / rate for i in range(len(data))])
+        result_signal = SampledSignal(data, indexes, len(self.data))
+        return result_signal
+
+    def quantize_uniform_truncation(data, indexes, num_levels):
+        delta = (max(data) - min(data)) / num_levels
+        quantized_data = [(math.floor((i - min(data)) / delta)) * delta + min(data) for i in data]
+        return Signal(None, None, quantized_data, indexes, None)
+
+    def quantize_uniform_rounding(data, indexes, num_levels):
+        delta = (max(data) - min(data)) / num_levels
+        quantized_data = [round((i - min(data)) / delta) * delta + min(data) for i in data]
+        return Signal(None, None, quantized_data, indexes, None)
+
     def generate_data(self):
         return None, self.generate_chart(), self.generate_bar_chart()
 
@@ -88,3 +108,20 @@ class Signal:
         plt.hist(self.data, bins=10, rwidth=0.9)
         plt.savefig('histogram.png')
         return plt
+
+    def compare_signals(self, reconstructed_signal):
+        plt.clf()
+        plt.plot(self.indexes, self.data, label='Original signal')
+        plt.plot(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal')
+        plt.legend()
+        plt.savefig('comparison_chart.png')
+        original_signal = np.array(self.data)
+        reconstructed_signal = np.array(reconstructed_signal.data)
+        mse = np.mean((original_signal - reconstructed_signal) ** 2)
+        signal_power = np.sum(original_signal ** 2)
+        noise_power = np.sum((original_signal - reconstructed_signal) ** 2)
+        snr = 10 * np.log10(signal_power / noise_power)
+        peak_signal = np.max(original_signal)
+        psnr = 20 * np.log10(peak_signal / np.sqrt(mse))
+        md = np.max(np.abs(original_signal - reconstructed_signal))
+        return [mse, snr, psnr, md]
