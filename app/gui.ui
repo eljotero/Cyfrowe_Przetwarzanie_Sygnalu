@@ -631,7 +631,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Wartość t dla funkcji sinc</string>
+     <string>Wartość n dla funkcji sinc</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="sinc_t_line_edit">

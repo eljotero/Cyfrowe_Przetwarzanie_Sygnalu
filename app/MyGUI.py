@@ -121,6 +121,7 @@ class MyGUI(QMainWindow):
                 self.show_data_window(title, values, signal)
                 self.signalsComboBox.addItem((self.chart_windows.__len__()).__str__())
                 self.signalsComboBox2.addItem((self.chart_windows.__len__()).__str__())
+                self.samplingComboBox.addItem((self.chart_windows.__len__()).__str__())
             else:
                 QMessageBox.warning(self, "Warning", "Some fields are empty.")
             return
@@ -203,11 +204,11 @@ class MyGUI(QMainWindow):
             signal = self.sampled_signals[self.quantizeSignalComboBox.currentIndex() - 1]
             if self.quantizeComboBox.currentIndex() == 1:
                 new_signal = Signal.quantize_uniform_truncation(signal.data, signal.indexes,
-                                                                int(self.num_level_line_edit.text()))
+                                                                float(self.num_level_line_edit.text()))
             elif self.quantizeComboBox.currentIndex() == 2:
                 new_signal = Signal.quantize_uniform_rounding(signal.data, signal.indexes,
-                                                              int(self.num_level_line_edit.text()))
-            values, chart1, chart2 = new_signal.generate_data()
+                                                              float(self.num_level_line_edit.text()))
+            values, chart1, chart2 = new_signal.generate_data(1)
             title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
             self.show_data_window(title, None, new_signal)
             self.sampled_signals.append(new_signal)
@@ -224,7 +225,10 @@ class MyGUI(QMainWindow):
             original_signal = self.signals_objects[self.samplingComboBox.currentIndex() - 1]
             original_signal_2 = Signal(original_signal.t1, original_signal.f, original_signal.data,
                                        original_signal.indexes, original_signal.type)
-            values = original_signal_2.compare_signals(reconstructed_signal)
+            if self.reconstructionTypeComboBox.currentIndex() == 1:
+                values = original_signal_2.compare_signals(reconstructed_signal, 1)
+            else:
+                values = original_signal_2.compare_signals(reconstructed_signal, None)
             title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
             self.show_comparison_window(title, values)
             self.signals_objects.append(reconstructed_signal)

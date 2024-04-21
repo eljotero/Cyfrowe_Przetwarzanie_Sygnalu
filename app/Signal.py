@@ -1,4 +1,3 @@
-import math
 import struct
 
 import numpy as np
@@ -78,24 +77,30 @@ class Signal:
         return result_signal
 
     def sample(self, rate):
-        sample_step = int(self.f / rate)
+        sample_step = int(len(self.data) / rate)
         data = self.data[::sample_step]
-        indexes = np.array([self.t1 + i / rate for i in range(len(data))])
-        result_signal = SampledSignal(data, indexes, len(self.data))
-        return result_signal
+        indexes = self.indexes[::sample_step]
+        return SampledSignal(data, indexes, len(self.data))
 
     def quantize_uniform_truncation(data, indexes, num_levels):
-        delta = (max(data) - min(data)) / num_levels
-        quantized_data = [(math.floor((i - min(data)) / delta)) * delta + min(data) for i in data]
+        data_min = min(data)
+        data_max = max(data)
+        delta = (data_max - data_min) / num_levels
+        quantized_data = [np.floor((i - data_min) / delta) * delta + data_min for i in data]
         return Signal(None, None, quantized_data, indexes, None)
 
     def quantize_uniform_rounding(data, indexes, num_levels):
-        delta = (max(data) - min(data)) / num_levels
-        quantized_data = [round((i - min(data)) / delta) * delta + min(data) for i in data]
+        data_min = min(data)
+        data_max = max(data)
+        delta = (data_max - data_min) / num_levels
+        quantized_data = [round((i - data_min) / delta) * delta + data_min for i in data]
         return Signal(None, None, quantized_data, indexes, None)
 
-    def generate_data(self):
-        return None, self.generate_chart(), self.generate_bar_chart()
+    def generate_data(self, case):
+        if case == 1:
+            return None, self.generate_quantize_chart(), self.generate_bar_chart()
+        if case is None:
+            return None, self.generate_chart(), self.generate_bar_chart()
 
     def generate_chart(self):
         plt.clf()
@@ -109,10 +114,13 @@ class Signal:
         plt.savefig('histogram.png')
         return plt
 
-    def compare_signals(self, reconstructed_signal):
+    def compare_signals(self, reconstructed_signal, case):
         plt.clf()
         plt.plot(self.indexes, self.data, label='Original signal')
-        plt.plot(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal')
+        if case == 1:
+            plt.step(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal')
+        if case is None:
+            plt.plot(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal')
         plt.legend()
         plt.savefig('comparison_chart.png')
         original_signal = np.array(self.data)
@@ -125,3 +133,9 @@ class Signal:
         psnr = 20 * np.log10(peak_signal / np.sqrt(mse))
         md = np.max(np.abs(original_signal - reconstructed_signal))
         return [mse, snr, psnr, md]
+
+    def generate_quantize_chart(self):
+        plt.clf()
+        plt.step(self.indexes, self.data, label='Original signal')
+        plt.savefig('chart.png')
+        return plt

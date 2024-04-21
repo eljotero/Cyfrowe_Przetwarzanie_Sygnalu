@@ -37,22 +37,11 @@ class SampledSignal:
 
     def first_order_interpolation_reconstruction(self):
         from Signal import Signal
-        reconstructed_data = np.zeros(self.original_signal_len)
         new_indexes = np.linspace(self.indexes[0], self.indexes[-1], num=self.original_signal_len)
-        j = 0
-        for i in range(1, self.original_signal_len):
-            while j < len(self.indexes) - 1 and new_indexes[i] >= self.indexes[j + 1]:
-                j += 1
-            if j == 0:
-                slope = 0
-                intercept = self.data[0]
-            else:
-                slope = (self.data[j] - self.data[j - 1]) / (self.indexes[j] - self.indexes[j - 1])
-                intercept = self.data[j - 1] - slope * self.indexes[j - 1]
-            reconstructed_data[i] = slope * new_indexes[i] + intercept
+        reconstructed_data = np.interp(new_indexes, self.indexes, self.data)
         return Signal(None, None, reconstructed_data, new_indexes, None)
 
-    def sinc_reconstruction(self, t_value):
+    def sinc_reconstruction(self, n_value):
         from Signal import Signal
         reconstructed_data = np.zeros(self.original_signal_len)
         new_indexes = np.linspace(self.indexes[0], self.indexes[-1], num=self.original_signal_len)
@@ -60,6 +49,6 @@ class SampledSignal:
             y = 0
             for i in range(len(self.data)):
                 delta_t = new_indexes[t] - self.indexes[i]
-                y += self.data[i] * np.sinc(delta_t * t_value)
+                y += self.data[i] * np.sinc(delta_t * n_value)
             reconstructed_data[t] = y
         return Signal(None, None, reconstructed_data, new_indexes, None)
