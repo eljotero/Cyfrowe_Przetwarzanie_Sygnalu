@@ -14,6 +14,7 @@ from Continuous.UnitStep import UnitStep
 from DataGUI import DataGui
 from Discrete.ImpulseNoise import ImpulseNoise
 from Discrete.UnitImpulse import UnitImpulse
+from SampledGUI import SampledGUI
 from Signal import Signal
 
 
@@ -26,6 +27,7 @@ class MyGUI(QMainWindow):
         self.signals_objects = []
         self.sampled_signals = []
         self.compare_windows = []
+        self.sampled_windows = []
         self.comboBox.currentIndexChanged.connect(self.on_combobox_changed)
         self.generateButton.clicked.connect(self.generate_data)
         self.operationButton.clicked.connect(self.operation)
@@ -134,9 +136,15 @@ class MyGUI(QMainWindow):
 
     def show_comparison_window(self, title, values):
         compare_gui = CompareGUI(title, values, parent=self)
-        compare_gui.id = len(self.chart_windows) + 1
+        compare_gui.id = len(self.chart_windows)
         self.compare_windows.append(compare_gui)
         compare_gui.show()
+
+    def show_sampled_window(self, title, values):
+        sampled_gui = SampledGUI(title, values, parent=self)
+        sampled_gui.id = len(self.sampled_windows)
+        self.sampled_windows.append(sampled_gui)
+        sampled_gui.show()
 
     def remove_chart_window(self, id):
         if len(self.chart_windows) > 0:
@@ -158,6 +166,18 @@ class MyGUI(QMainWindow):
                     break
             if index_to_remove is not None:
                 self.compare_windows.pop(index_to_remove)
+
+    def remove_sampled_window(self, id):
+        if len(self.sampled_signals) > 0:
+            index_to_remove = None
+            self.quantizeSignalComboBox.removeItem(id + 1)
+            self.reconstructionSignalComboBox.removeItem(id + 1)
+            for i, window in enumerate(self.sampled_signals):
+                if hasattr(window, 'id') and window.id == id:
+                    index_to_remove = i
+                    break
+            if index_to_remove is not None:
+                self.sampled_signals.pop(index_to_remove)
 
     def operation(self):
         if self.signalsComboBox.currentIndex() != 0 and self.signalsComboBox2.currentIndex() != 0:
@@ -193,14 +213,15 @@ class MyGUI(QMainWindow):
             op_signal = Signal(signal.t1, signal.f, signal.data, signal.indexes, signal.type)
             new_signal = op_signal.sample(float(self.samplingRate_line_edit.text()))
             values, chart1, chart2 = new_signal.generate_data()
-            title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
-            self.show_data_window(title, None, new_signal)
+            title = 'ID: ' + (self.sampled_windows.__len__() + 1).__str__()
+            self.show_sampled_window(title, values)
             self.sampled_signals.append(new_signal)
-            self.quantizeSignalComboBox.addItem(str(self.samplingComboBox.currentIndex() - 1))
-            self.reconstructionSignalComboBox.addItem(str(self.samplingComboBox.currentIndex() - 1))
+            self.quantizeSignalComboBox.addItem(str(self.samplingComboBox.currentIndex()))
+            self.reconstructionSignalComboBox.addItem(str(self.samplingComboBox.currentIndex()))
 
     def quantize(self):
-        if self.quantizeComboBox.currentIndex() != 0 and self.quantizeSignalComboBox.currentIndex() != 0:
+        if self.quantizeComboBox.currentIndex() != 0 and self.quantizeSignalComboBox.currentIndex() != 0 and float(
+                self.num_level_line_edit.text()) != 0:
             signal = self.sampled_signals[self.quantizeSignalComboBox.currentIndex() - 1]
             if self.quantizeComboBox.currentIndex() == 1:
                 new_signal = Signal.quantize_uniform_truncation(signal.data, signal.indexes,
@@ -208,10 +229,12 @@ class MyGUI(QMainWindow):
             elif self.quantizeComboBox.currentIndex() == 2:
                 new_signal = Signal.quantize_uniform_rounding(signal.data, signal.indexes,
                                                               float(self.num_level_line_edit.text()))
-            values, chart1, chart2 = new_signal.generate_data(1)
+            original_signal = self.sampled_signals[self.samplingComboBox.currentIndex() - 1]
+            original_signal_2 = Signal(None, None, original_signal.data,
+                                       original_signal.indexes, None)
+            values = original_signal_2.compare_signals(new_signal, 2)
             title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
-            self.show_data_window(title, None, new_signal)
-            self.sampled_signals.append(new_signal)
+            self.show_comparison_window(title, values)
 
     def reconstruct_signal(self):
         if self.reconstructionTypeComboBox.currentIndex() != 0 and self.reconstructionSignalComboBox.currentIndex() != 0:
