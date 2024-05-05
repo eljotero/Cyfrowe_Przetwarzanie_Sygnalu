@@ -142,7 +142,7 @@ class MyGUI(QMainWindow):
 
     def show_sampled_window(self, title, values):
         sampled_gui = SampledGUI(title, values, parent=self)
-        sampled_gui.id = len(self.sampled_windows)
+        sampled_gui.id = len(self.sampled_windows) + 1
         self.sampled_windows.append(sampled_gui)
         sampled_gui.show()
 
@@ -168,16 +168,17 @@ class MyGUI(QMainWindow):
                 self.compare_windows.pop(index_to_remove)
 
     def remove_sampled_window(self, id):
-        if len(self.sampled_signals) > 0:
+        if len(self.sampled_windows) > 0:
             index_to_remove = None
-            self.quantizeSignalComboBox.removeItem(id + 1)
-            self.reconstructionSignalComboBox.removeItem(id + 1)
-            for i, window in enumerate(self.sampled_signals):
+            self.quantizeSignalComboBox.removeItem(id)
+            self.reconstructionSignalComboBox.removeItem(id)
+            self.sampled_signals.pop(id - 1)
+            for i, window in enumerate(self.sampled_windows):
                 if hasattr(window, 'id') and window.id == id:
                     index_to_remove = i
                     break
             if index_to_remove is not None:
-                self.sampled_signals.pop(index_to_remove)
+                self.sampled_windows.pop(index_to_remove)
 
     def operation(self):
         if self.signalsComboBox.currentIndex() != 0 and self.signalsComboBox2.currentIndex() != 0:
