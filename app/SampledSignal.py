@@ -41,13 +41,14 @@ class SampledSignal:
         reconstructed_data = np.interp(new_indexes, self.indexes, self.data)
         return Signal(None, None, reconstructed_data, new_indexes, None)
 
-    def sinc_reconstruction(self, n_value):
+    def sinc_reconstruction(self, n_value, neigh_value):
         from Signal import Signal
         reconstructed_data = np.zeros(self.original_signal_len)
         new_indexes = np.linspace(self.indexes[0], self.indexes[-1], num=self.original_signal_len)
         for t in range(self.original_signal_len):
             y = 0
-            for i in range(len(self.data)):
+            indices = np.argsort(np.abs(self.indexes - new_indexes[t]))[:neigh_value]
+            for i in indices:
                 delta_t = new_indexes[t] - self.indexes[i]
                 y += self.data[i] * np.sinc(delta_t * n_value)
             reconstructed_data[t] = y

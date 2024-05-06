@@ -134,7 +134,8 @@ class Signal:
         peak_signal = np.max(original_signal)
         psnr = 20 * np.log10(peak_signal / np.sqrt(mse))
         md = np.max(np.abs(original_signal - reconstructed_signal))
-        return [mse, snr, psnr, md]
+        enob = (snr - 1.76) / 6.02
+        return [mse, snr, psnr, md, enob]
 
     def generate_quantize_chart(self):
         plt.clf()
