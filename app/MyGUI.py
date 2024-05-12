@@ -244,9 +244,8 @@ class MyGUI(QMainWindow):
                 reconstructed_signal = signal.zero_order_hold_reconstruction()
             elif self.reconstructionTypeComboBox.currentIndex() == 2:
                 reconstructed_signal = signal.first_order_interpolation_reconstruction()
-            elif self.reconstructionTypeComboBox.currentIndex() == 3 and self.sinc_t_line_edit.text() != "" and self.neig_line_edit.text() != "":
-                reconstructed_signal = signal.sinc_reconstruction(float(self.sinc_t_line_edit.text()),
-                                                                  int(self.neig_line_edit.text()))
+            elif self.reconstructionTypeComboBox.currentIndex() == 3 and self.neig_line_edit.text() != "":
+                reconstructed_signal = signal.sinc_reconstruction(int(self.neig_line_edit.text()))
             original_signal = self.signals_objects[self.samplingComboBox.currentIndex() - 1]
             original_signal_2 = Signal(original_signal.t1, original_signal.f, original_signal.data,
                                        original_signal.indexes, original_signal.type)
