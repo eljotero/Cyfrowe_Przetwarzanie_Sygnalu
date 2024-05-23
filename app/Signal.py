@@ -121,7 +121,7 @@ class Signal:
             plt.step(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal')
         if case == 2:
             plt.step(reconstructed_signal.indexes, reconstructed_signal.data, label='Quantized signal')
-        if case is None:
+        if case == 3:
             plt.plot(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal')
         plt.legend()
         plt.savefig('comparison_chart.png')
@@ -142,3 +142,65 @@ class Signal:
         plt.step(self.indexes, self.data, label='Original signal')
         plt.savefig('chart.png')
         return plt
+
+    def convolve(self, second_signal):
+        result_signal = Signal(self.t1, self.f, self.data, self.indexes)
+        M = len(self.data)
+        for n in range(M):
+            sum = 0
+            for k in range(M):
+                if n - k < 0:
+                    continue
+                sum += self.data[k] * second_signal.data[n - k]
+            result_signal.data[n] = sum
+        return result_signal
+
+    def low_pass_filter(self, M, F0, Fp):
+        result = []
+        K = Fp / F0
+        center = (M - 1) // 2
+
+        for n in range(M):
+            if n == center:
+                factor = 2.0 / K
+            else:
+                factor = np.sin(2 * np.pi * (n - center) / K) / (np.pi * (n - center))
+            window_value = 0.54 - 0.46 * np.cos(2 * np.pi * n / (M - 1))
+            factor *= window_value
+            result.append(factor)
+
+        return result
+
+    def band_pass_filter(self, M, F0, Fp):
+        low_pass_factors = self.low_pass_filter(M, F0, Fp)
+        result = []
+
+        for i in range(len(low_pass_factors)):
+            result.append(low_pass_factors[i] * 2 * np.sin(np.pi * i / 2.0))
+
+        return result
+
+    def high_pass_filter(self, M, F0, Fp):
+        low_pass_factors = self.low_pass_filter(M, 1000 - F0, Fp)
+        result = []
+
+        for i in range(len(low_pass_factors)):
+            result.append(low_pass_factors[i] * (1 if i % 2 == 0 else -1))
+
+        return result
+
+    def direct_correlation(self, second_signal):
+        M = len(self.data)
+        N = len(second_signal.data)
+        result_signal = Signal(self.t1, self.f, [0] * (M + N - 1), self.indexes)
+
+        for m in range(M + N - 1):
+            for n in range(N):
+                if m - n >= 0 and m - n < M:
+                    result_signal.data[m] += self.data[m - n] * second_signal.data[n]
+        return result_signal
+
+    def convolution_correlation(self, second_signal):
+        reversed_second_signal = Signal(second_signal.t1, second_signal.f, second_signal.data[::-1],
+                                        second_signal.indexes)
+        return self.convolve(reversed_second_signal)

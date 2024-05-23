@@ -198,6 +198,8 @@ class MyGUI(QMainWindow):
                     result_signal = op_signal_1.multiply(op_signal_2)
                 elif self.operationComboBox.currentIndex() == 4:
                     result_signal = op_signal_1.divide(op_signal_2)
+                elif self.operationComboBox.currentIndex() == 5:
+                    result_signal = op_signal_1.convolve(op_signal_2)
                 values, chart1, chart2 = result_signal.generate_data()
                 title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
                 self.signalsComboBox.addItem((self.chart_windows.__len__() + 1).__str__())
@@ -252,7 +254,7 @@ class MyGUI(QMainWindow):
             if self.reconstructionTypeComboBox.currentIndex() == 1:
                 values = original_signal_2.compare_signals(reconstructed_signal, 1)
             else:
-                values = original_signal_2.compare_signals(reconstructed_signal, None)
+                values = original_signal_2.compare_signals(reconstructed_signal, 3)
             title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
             self.show_comparison_window(title, values)
             self.signals_objects.append(reconstructed_signal)
