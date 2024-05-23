@@ -155,40 +155,6 @@ class Signal:
             result_signal.data[n] = sum
         return result_signal
 
-    def low_pass_filter(self, M, F0, Fp):
-        result = []
-        K = Fp / F0
-        center = (M - 1) // 2
-
-        for n in range(M):
-            if n == center:
-                factor = 2.0 / K
-            else:
-                factor = np.sin(2 * np.pi * (n - center) / K) / (np.pi * (n - center))
-            window_value = 0.54 - 0.46 * np.cos(2 * np.pi * n / (M - 1))
-            factor *= window_value
-            result.append(factor)
-
-        return result
-
-    def band_pass_filter(self, M, F0, Fp):
-        low_pass_factors = self.low_pass_filter(M, F0, Fp)
-        result = []
-
-        for i in range(len(low_pass_factors)):
-            result.append(low_pass_factors[i] * 2 * np.sin(np.pi * i / 2.0))
-
-        return result
-
-    def high_pass_filter(self, M, F0, Fp):
-        low_pass_factors = self.low_pass_filter(M, 1000 - F0, Fp)
-        result = []
-
-        for i in range(len(low_pass_factors)):
-            result.append(low_pass_factors[i] * (1 if i % 2 == 0 else -1))
-
-        return result
-
     def direct_correlation(self, second_signal):
         M = len(self.data)
         N = len(second_signal.data)

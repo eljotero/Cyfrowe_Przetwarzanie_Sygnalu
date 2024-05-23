@@ -14,6 +14,9 @@ from Continuous.UnitStep import UnitStep
 from DataGUI import DataGui
 from Discrete.ImpulseNoise import ImpulseNoise
 from Discrete.UnitImpulse import UnitImpulse
+from Filters.BandPassFilter import BandPassFilter
+from Filters.HighPassFilter import HighPassFilter
+from Filters.LowPassFilter import LowPassFilter
 from SampledGUI import SampledGUI
 from Signal import Signal
 
@@ -55,7 +58,10 @@ class MyGUI(QMainWindow):
             10: [self.a_line_edit, self.ns_line_edit, self.n1_line_edit, self.l_line_edit, self.f_line_edit,
                  self.bins_line_edit],
             11: [self.a_line_edit, self.t1_line_edit, self.d_line_edit, self.f_line_edit, self.p_line_edit,
-                 self.bins_line_edit]
+                 self.bins_line_edit],
+            12: [self.m_line_edit, self.f_line_edit, self.fp_line_edit],
+            13: [self.m_line_edit, self.f_line_edit, self.fp_line_edit],
+            14: [self.m_line_edit, self.f_line_edit, self.fp_line_edit]
         }
         self.signal_classes = {
             1: UniformNoise,
@@ -68,7 +74,10 @@ class MyGUI(QMainWindow):
             8: TriangularWave,
             9: UnitStep,
             10: UnitImpulse,
-            11: ImpulseNoise
+            11: ImpulseNoise,
+            12: LowPassFilter,
+            13: BandPassFilter,
+            14: HighPassFilter
         }
 
         self.mapping_line_edit_params = {
@@ -83,7 +92,9 @@ class MyGUI(QMainWindow):
             "l_line_edit": "l",
             "ts_line_edit": "ts",
             "p_line_edit": "p",
-            "bins_line_edit": "bins"
+            "bins_line_edit": "bins",
+            "m_line_edit": "M",
+            "fp_line_edit": "Fp"
         }
 
     def on_combobox_changed(self, index):
@@ -116,14 +127,22 @@ class MyGUI(QMainWindow):
                     for line_edit in line_edits
                 }
                 params['signal_type'] = signal_type
-                signal = SignalClass(**params)
-                title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
-                values, chart1, chart2 = signal.generate_data()
-                self.signals_objects.append(signal)
-                self.show_data_window(title, values, signal)
-                self.signalsComboBox.addItem((self.chart_windows.__len__()).__str__())
-                self.signalsComboBox2.addItem((self.chart_windows.__len__()).__str__())
-                self.samplingComboBox.addItem((self.chart_windows.__len__()).__str__())
+                if signal_type in [12, 13, 14]:
+                    params.pop('signal_type', None)
+                    signal = SignalClass(**params)
+                    values, chart1, chart2 = signal.generate_data()
+                    title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
+                    self.sampled_signals.append(signal)
+                    self.show_sampled_window(title, values)
+                else:
+                    signal = SignalClass(**params)
+                    title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
+                    values, chart1, chart2 = signal.generate_data()
+                    self.signals_objects.append(signal)
+                    self.show_data_window(title, values, signal)
+                    self.samplingComboBox.addItem((self.chart_windows.__len__()).__str__())
+                    self.signalsComboBox.addItem((self.chart_windows.__len__()).__str__())
+                    self.signalsComboBox2.addItem((self.chart_windows.__len__()).__str__())
             else:
                 QMessageBox.warning(self, "Warning", "Some fields are empty.")
             return
