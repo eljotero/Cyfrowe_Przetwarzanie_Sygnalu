@@ -3,10 +3,23 @@ import numpy as np
 
 class LowPassFilter:
 
-    def __init__(self, Fp, f, M):
+    def __init__(self, Fp, f, M, window_type):
         self.M = M
         self.f = f
         self.Fp = Fp
+        self.window_type = window_type
+
+    def rectangular_window(self, n):
+        return 1
+
+    def hamming_window(self, n):
+        return 0.53836 - 0.46164 * np.cos(2 * np.pi * n / self.M)
+
+    def hanning_window(self, n):
+        return 0.5 - 0.5 * np.cos(2 * np.pi * n / self.M)
+
+    def blackman_window(self, n):
+        return 0.42 - 0.5 * np.cos(2 * np.pi * n / self.M) + 0.08 * np.cos(4 * np.pi * n / self.M)
 
     def filter(self):
         result = []
@@ -18,19 +31,27 @@ class LowPassFilter:
                 factor = 2.0 / K
             else:
                 factor = np.sin(2 * np.pi * (n - center) / K) / (np.pi * (n - center))
-            window_value = 0.53836 - 0.46164 * (np.cos(2 * np.pi * n / self.M))
+            if self.window_type == 1:
+                window_value = self.rectangular_window(n)
+            elif self.window_type == 2:
+                window_value = self.hamming_window(n)
+            elif self.window_type == 3:
+                window_value = self.hanning_window(n)
+            else:
+                window_value = self.blackman_window(n)
             factor *= window_value
             result.append(factor)
 
         return result
 
-    def argument(self, i):
-        return i * (self.M / (len(self.filter()) - 1))
+    def argument(self, i, filter_length):
+        return i * (self.M / (filter_length - 1))
 
     def generate_data(self):
         import matplotlib.pyplot as plt
         y_values = self.filter()
-        x_values = [self.argument(i) for i in range(len(y_values))]
+        filter_length = len(y_values)
+        x_values = [self.argument(i, filter_length) for i in range(filter_length)]
         plt.clf()
         plt.scatter(x_values, y_values)
         plt.savefig('chart.png')

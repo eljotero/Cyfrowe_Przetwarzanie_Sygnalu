@@ -4,8 +4,8 @@ from .LowPassFilter import LowPassFilter
 
 
 class BandPassFilter(LowPassFilter):
-    def __init__(self, Fp, f, M):
-        super().__init__(Fp, f, M)
+    def __init__(self, Fp, f, M, window_type):
+        super().__init__(Fp, f, M, window_type)
 
     def filter(self):
         low_pass_factors = super().filter()

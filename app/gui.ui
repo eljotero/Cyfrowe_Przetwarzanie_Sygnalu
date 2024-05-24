@@ -19,8 +19,8 @@
      <rect>
       <x>280</x>
       <y>10</y>
-      <width>191</width>
-      <height>381</height>
+      <width>241</width>
+      <height>411</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout">
@@ -212,6 +212,42 @@
      <item row="15" column="1">
       <widget class="QLineEdit" name="fp_line_edit"/>
      </item>
+     <item row="16" column="0">
+      <widget class="QLabel" name="label_21">
+       <property name="text">
+        <string>Wybór okna</string>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="1">
+      <widget class="QComboBox" name="windowComboBox">
+       <item>
+        <property name="text">
+         <string>Wybierz typ okna</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Okno prostokątne</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Okno Hamminga</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Okno Hanninga</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Okno Blackmana</string>
+        </property>
+       </item>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QComboBox" name="comboBox">
@@ -305,8 +341,8 @@
    <widget class="QPushButton" name="generateButton">
     <property name="geometry">
      <rect>
-      <x>480</x>
-      <y>10</y>
+      <x>590</x>
+      <y>20</y>
       <width>191</width>
       <height>81</height>
      </rect>
@@ -318,8 +354,8 @@
    <widget class="QComboBox" name="operationComboBox">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>30</y>
+      <x>830</x>
+      <y>20</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -358,8 +394,8 @@
    <widget class="QComboBox" name="signalsComboBox">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>100</y>
+      <x>830</x>
+      <y>90</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -373,8 +409,8 @@
    <widget class="QPushButton" name="operationButton">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>250</y>
+      <x>830</x>
+      <y>240</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -386,8 +422,8 @@
    <widget class="QComboBox" name="signalsComboBox2">
     <property name="geometry">
      <rect>
-      <x>740</x>
-      <y>180</y>
+      <x>830</x>
+      <y>170</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -401,8 +437,8 @@
    <widget class="QPushButton" name="readFromFileButton">
     <property name="geometry">
      <rect>
-      <x>480</x>
-      <y>110</y>
+      <x>590</x>
+      <y>120</y>
       <width>191</width>
       <height>81</height>
      </rect>

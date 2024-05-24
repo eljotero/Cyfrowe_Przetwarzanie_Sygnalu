@@ -94,7 +94,8 @@ class MyGUI(QMainWindow):
             "p_line_edit": "p",
             "bins_line_edit": "bins",
             "m_line_edit": "M",
-            "fp_line_edit": "Fp"
+            "fp_line_edit": "Fp",
+            "windowComboBox": "window"
         }
 
     def on_combobox_changed(self, index):
@@ -121,6 +122,7 @@ class MyGUI(QMainWindow):
             if all([line_edit.text() for line_edit in line_edits]):
                 SignalClass = self.signal_classes[self.comboBox.currentIndex()]
                 signal_type = self.comboBox.currentIndex()
+                window_type = self.windowComboBox.currentIndex()
                 params = {
                     self.mapping_line_edit_params[line_edit.objectName()]:
                         int(line_edit.text()) if line_edit.objectName() == "bins_line_edit" else float(line_edit.text())
@@ -128,15 +130,21 @@ class MyGUI(QMainWindow):
                 }
                 params['signal_type'] = signal_type
                 if signal_type in [12, 13, 14]:
+                    params['window_type'] = window_type
+                    if window_type == 0:
+                        QMessageBox.warning(self, "Warning", "Window type must be selected.")
+                        return
                     params.pop('signal_type', None)
                     signal = SignalClass(**params)
                     values, chart1, chart2 = signal.generate_data()
-                    title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
+                    title = 'ID: ' + (self.chart_windows.__len__()).__str__() + 'filter'
                     self.sampled_signals.append(signal)
                     self.show_sampled_window(title, values)
+                    self.signalsComboBox.addItem((self.chart_windows.__len__()).__str__() + 'filter')
+                    self.signalsComboBox2.addItem((self.chart_windows.__len__()).__str__() + 'filter')
                 else:
                     signal = SignalClass(**params)
-                    title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
+                    title = 'ID: ' + (self.chart_windows.__len__()).__str__()
                     values, chart1, chart2 = signal.generate_data()
                     self.signals_objects.append(signal)
                     self.show_data_window(title, values, signal)
@@ -219,7 +227,7 @@ class MyGUI(QMainWindow):
                     result_signal = op_signal_1.divide(op_signal_2)
                 elif self.operationComboBox.currentIndex() == 5:
                     result_signal = op_signal_1.convolve(op_signal_2)
-                values, chart1, chart2 = result_signal.generate_data()
+                values, chart1, chart2 = result_signal.generate_data(None)
                 title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
                 self.signalsComboBox.addItem((self.chart_windows.__len__() + 1).__str__())
                 self.signalsComboBox2.addItem((self.chart_windows.__len__() + 1).__str__())
