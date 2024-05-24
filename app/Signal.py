@@ -144,7 +144,7 @@ class Signal:
         return plt
 
     def convolve(self, second_signal):
-        result_signal = Signal(self.t1, self.f, self.data, self.indexes)
+        result_signal = SampledSignal(self.data, self.indexes, len(self.data))
         M = len(self.data)
         for n in range(M):
             sum = 0
@@ -158,12 +158,15 @@ class Signal:
     def direct_correlation(self, second_signal):
         M = len(self.data)
         N = len(second_signal.data)
-        result_signal = Signal(self.t1, self.f, [0] * (M + N - 1), self.indexes)
+        result_indexes = [i * 1 / self.f for i in range(M + N - 1)]
+        result_signal = SampledSignal([0] * (M + N - 1), result_indexes, M + N - 1)
 
-        for m in range(M + N - 1):
-            for n in range(N):
-                if m - n >= 0 and m - n < M:
-                    result_signal.data[m] += self.data[m - n] * second_signal.data[n]
+        for i in range(M + N - 1):
+            i = i - (N - 1)
+            start_k = max(0, i)
+            end_k = min(M, N + i)
+            for k in range(start_k, end_k):
+                result_signal.data[i + N - 1] += self.data[k] * second_signal.data[k - i]
         return result_signal
 
     def convolution_correlation(self, second_signal):

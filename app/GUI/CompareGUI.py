@@ -8,7 +8,7 @@ class CompareGUI(QMainWindow):
         self.setWindowTitle(title)
         self.id = None
         label = QLabel(self)
-        pixmap = QPixmap('comparison_chart.png')
+        pixmap = QPixmap('./comparison_chart.png')
         label.setPixmap(pixmap)
         layout = QHBoxLayout()
         layout.addWidget(label)

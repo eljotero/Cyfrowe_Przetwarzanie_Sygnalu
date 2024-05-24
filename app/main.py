@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 
-from MyGUI import MyGUI
+from GUI.MyGUI import MyGUI
 
 
 def main():

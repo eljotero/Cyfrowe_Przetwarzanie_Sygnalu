@@ -1,5 +1,3 @@
-import struct
-
 from SignalGenerator import SignalGenerator
 
 

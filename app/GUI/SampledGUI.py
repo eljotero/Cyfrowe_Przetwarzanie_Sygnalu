@@ -8,7 +8,7 @@ class SampledGUI(QMainWindow):
         self.setWindowTitle(title)
         self.id = None
         label = QLabel(self)
-        pixmap = QPixmap('chart.png')
+        pixmap = QPixmap('./chart.png')
         label.setPixmap(pixmap)
         layout = QHBoxLayout()
         layout.addWidget(label)

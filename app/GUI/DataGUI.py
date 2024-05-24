@@ -11,8 +11,8 @@ class DataGui(QMainWindow):
         self.id = None
         label = QLabel(self)
         label2 = QLabel(self)
-        pixmap = QPixmap('chart.png')
-        pixmap2 = QPixmap('histogram.png')
+        pixmap = QPixmap('./chart.png')
+        pixmap2 = QPixmap('./histogram.png')
         label.setPixmap(pixmap)
         label2.setPixmap(pixmap2)
         layout = QHBoxLayout()

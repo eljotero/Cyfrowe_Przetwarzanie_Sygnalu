@@ -8,8 +8,9 @@ class LowPassFilter:
         self.f = f
         self.Fp = Fp
         self.window_type = window_type
+        self.data = self.filter()
 
-    def rectangular_window(self, n):
+    def rectangular_window(self):
         return 1
 
     def hamming_window(self, n):
@@ -32,7 +33,7 @@ class LowPassFilter:
             else:
                 factor = np.sin(2 * np.pi * (n - center) / K) / (np.pi * (n - center))
             if self.window_type == 1:
-                window_value = self.rectangular_window(n)
+                window_value = self.rectangular_window()
             elif self.window_type == 2:
                 window_value = self.hamming_window(n)
             elif self.window_type == 3:

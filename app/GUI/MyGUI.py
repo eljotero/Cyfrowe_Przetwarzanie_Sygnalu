@@ -1,7 +1,7 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 
-from CompareGUI import CompareGUI
+from .CompareGUI import CompareGUI
 from Continuous.FullWave import FullWave
 from Continuous.GaussianNoise import GaussianNoise
 from Continuous.HalfWave import HalfWave
@@ -11,13 +11,13 @@ from Continuous.SymmetricalSquareWave import SymmetricalSquareWave
 from Continuous.TriangularWave import TriangularWave
 from Continuous.UniformNoise import UniformNoise
 from Continuous.UnitStep import UnitStep
-from DataGUI import DataGui
+from .DataGUI import DataGui
 from Discrete.ImpulseNoise import ImpulseNoise
 from Discrete.UnitImpulse import UnitImpulse
 from Filters.BandPassFilter import BandPassFilter
 from Filters.HighPassFilter import HighPassFilter
 from Filters.LowPassFilter import LowPassFilter
-from SampledGUI import SampledGUI
+from .SampledGUI import SampledGUI
 from Signal import Signal
 
 
@@ -105,6 +105,10 @@ class MyGUI(QMainWindow):
             line_edits = self.combobox_mapping_line_edit.get(index, [])
             for line_edit in line_edits:
                 line_edit.setEnabled(True)
+            if index in [12, 13, 14]:
+                self.windowComboBox.setEnabled(True)
+            else:
+                self.windowComboBox.setEnabled(False)
 
     def disable_all_line_edits(self):
         for line_edit_list in self.combobox_mapping_line_edit.values():
@@ -130,27 +134,22 @@ class MyGUI(QMainWindow):
                 }
                 params['signal_type'] = signal_type
                 if signal_type in [12, 13, 14]:
+                    params.pop('signal_type', None)
                     params['window_type'] = window_type
                     if window_type == 0:
                         QMessageBox.warning(self, "Warning", "Window type must be selected.")
                         return
-                    params.pop('signal_type', None)
-                    signal = SignalClass(**params)
-                    values, chart1, chart2 = signal.generate_data()
-                    title = 'ID: ' + (self.chart_windows.__len__()).__str__() + 'filter'
-                    self.sampled_signals.append(signal)
-                    self.show_sampled_window(title, values)
-                    self.signalsComboBox.addItem((self.chart_windows.__len__()).__str__() + 'filter')
-                    self.signalsComboBox2.addItem((self.chart_windows.__len__()).__str__() + 'filter')
-                else:
-                    signal = SignalClass(**params)
-                    title = 'ID: ' + (self.chart_windows.__len__()).__str__()
-                    values, chart1, chart2 = signal.generate_data()
-                    self.signals_objects.append(signal)
-                    self.show_data_window(title, values, signal)
+                signal = SignalClass(**params)
+                values, chart1, chart2 = signal.generate_data()
+                title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
+                self.signals_objects.append(signal)
+                self.show_data_window(title, values, signal)
+                self.signalsComboBox.addItem((self.chart_windows.__len__()).__str__())
+                self.signalsComboBox2.addItem((self.chart_windows.__len__()).__str__())
+                if signal_type not in [12, 13, 14]:
                     self.samplingComboBox.addItem((self.chart_windows.__len__()).__str__())
-                    self.signalsComboBox.addItem((self.chart_windows.__len__()).__str__())
-                    self.signalsComboBox2.addItem((self.chart_windows.__len__()).__str__())
+
+
             else:
                 QMessageBox.warning(self, "Warning", "Some fields are empty.")
             return
@@ -174,16 +173,19 @@ class MyGUI(QMainWindow):
         sampled_gui.show()
 
     def remove_chart_window(self, id):
-        if len(self.chart_windows) > 0:
-            self.signalsComboBox.removeItem(id)
-            self.signalsComboBox2.removeItem(id)
-            self.samplingComboBox.removeItem(id)
-            for i, window in enumerate(self.chart_windows):
-                if hasattr(window, 'id') and window.id == id:
-                    index_to_remove = i
-                    break
-            if index_to_remove is not None:
-                self.chart_windows.pop(index_to_remove)
+        id_str = str(id)
+        index1 = self.signalsComboBox.findText(id_str)
+        index2 = self.signalsComboBox2.findText(id_str)
+        if index1 != -1:
+            self.signalsComboBox.removeItem(index1)
+        if index2 != -1:
+            self.signalsComboBox2.removeItem(index2)
+        for i, window in enumerate(self.chart_windows):
+            if hasattr(window, 'id') and window.id == id:
+                index_to_remove = i
+                break
+        if index_to_remove is not None:
+            self.chart_windows.pop(index_to_remove)
 
     def remove_compare_window(self, id):
         if len(self.compare_windows) > 0:
@@ -211,8 +213,17 @@ class MyGUI(QMainWindow):
         if self.signalsComboBox.currentIndex() != 0 and self.signalsComboBox2.currentIndex() != 0:
             signal1 = self.signals_objects[self.signalsComboBox.currentIndex() - 1]
             signal2 = self.signals_objects[self.signalsComboBox2.currentIndex() - 1]
-            op_signal_1 = Signal(signal1.t1, signal1.f, signal1.data, signal1.indexes, signal1.type)
-            op_signal_2 = Signal(signal2.t1, signal2.f, signal2.data, signal2.indexes, signal2.type)
+            op_signal_1 = Signal(getattr(signal1, 't1', None),
+                                 getattr(signal1, 'f', None),
+                                 getattr(signal1, 'data', None),
+                                 getattr(signal1, 'indexes', None),
+                                 getattr(signal1, 'type', None))
+
+            op_signal_2 = Signal(getattr(signal2, 't1', None),
+                                 getattr(signal2, 'f', None),
+                                 getattr(signal2, 'data', None),
+                                 getattr(signal2, 'indexes', None),
+                                 getattr(signal2, 'type', None))
             if signal1.data.__len__() != signal2.data.__len__():
                 QMessageBox.warning(self, "Warning", "Sygnaly musza byc tej samej dlugosci.")
                 return
@@ -227,6 +238,25 @@ class MyGUI(QMainWindow):
                     result_signal = op_signal_1.divide(op_signal_2)
                 elif self.operationComboBox.currentIndex() == 5:
                     result_signal = op_signal_1.convolve(op_signal_2)
+                    values, chart1, chart2 = result_signal.generate_data()
+                    title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
+                    self.show_sampled_window(title, values)
+                    self.signals_objects.append(result_signal)
+                    return
+                elif self.operationComboBox.currentIndex() == 6:
+                    result_signal = op_signal_1.direct_correlation(op_signal_2)
+                    values, chart1, chart2 = result_signal.generate_data()
+                    title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
+                    self.show_sampled_window(title, values)
+                    self.signals_objects.append(result_signal)
+                    return
+                elif self.operationComboBox.currentIndex() == 7:
+                    result_signal = op_signal_1.convolution_correlation(op_signal_2)
+                    values, chart1, chart2 = result_signal.generate_data()
+                    title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
+                    self.show_sampled_window(title, values)
+                    self.signals_objects.append(result_signal)
+                    return
                 values, chart1, chart2 = result_signal.generate_data(None)
                 title = 'ID: ' + (self.chart_windows.__len__() + 1).__str__()
                 self.signalsComboBox.addItem((self.chart_windows.__len__() + 1).__str__())

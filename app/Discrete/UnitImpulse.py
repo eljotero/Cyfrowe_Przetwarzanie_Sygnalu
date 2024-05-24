@@ -15,7 +15,7 @@ class UnitImpulse(DiscreteSignal):
         for i in range(int(self.l * self.f)):
             t = self.n1 + i / self.f
             if i == self.ns:
-                self.data.append(1)
+                self.data.append(self.A)
             else:
                 self.data.append(0)
             self.indexes.append(t)
