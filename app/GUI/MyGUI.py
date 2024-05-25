@@ -16,6 +16,7 @@ from Filters.BandPassFilter import BandPassFilter
 from Filters.HighPassFilter import HighPassFilter
 from Filters.LowPassFilter import LowPassFilter
 from Signal import Signal
+from .AnalisysGUI import AnalysisGUI
 from .CompareGUI import CompareGUI
 from .DataGUI import DataGui
 from .SampledGUI import SampledGUI
@@ -211,8 +212,13 @@ class MyGUI(QMainWindow):
             self.sampled_signals.remove(signal_to_remove)
         if len(self.sampled_windows) > 0:
             index_to_remove = None
-            self.quantizeSignalComboBox.removeItem(id)
-            self.reconstructionSignalComboBox.removeItem(id)
+            id_str = str(id)
+            index1 = self.quantizeSignalComboBox.findText(id_str)
+            index2 = self.reconstructionSignalComboBox.findText(id_str)
+            if index1 != -1:
+                self.quantizeSignalComboBox.removeItem(index1)
+            if index2 != -1:
+                self.reconstructionSignalComboBox.removeItem(index2)
             self.signalsComboBox.removeItem(id)
             self.signalsComboBox2.removeItem(id)
             for i, window in enumerate(self.sampled_windows):
@@ -237,46 +243,54 @@ class MyGUI(QMainWindow):
                                  getattr(signal2, 'data', None),
                                  getattr(signal2, 'indexes', None),
                                  getattr(signal2, 'type', None))
-            if signal1.data.__len__() != signal2.data.__len__():
-                QMessageBox.warning(self, "Warning", "Sygnaly musza byc tej samej dlugosci.")
-                return
-            else:
-                if self.operationComboBox.currentIndex() == 1:
-                    result_signal = op_signal_1.add(op_signal_2)
-                elif self.operationComboBox.currentIndex() == 2:
-                    result_signal = op_signal_1.subtract(op_signal_2)
-                elif self.operationComboBox.currentIndex() == 3:
-                    result_signal = op_signal_1.multiply(op_signal_2)
-                elif self.operationComboBox.currentIndex() == 4:
-                    result_signal = op_signal_1.divide(op_signal_2)
-                elif self.operationComboBox.currentIndex() == 5:
-                    result_signal = op_signal_1.convolve(op_signal_2, self.id)
-                    values, chart1, chart2 = result_signal.generate_data()
-                    title = 'ID: ' + (self.id).__str__()
-                    self.show_sampled_window(title, values)
-                    self.signals_objects.append(result_signal)
+            if self.operationComboBox.currentIndex() == 1:
+                if signal1.data.__len__() != signal2.data.__len__():
+                    QMessageBox.warning(self, "Warning", "Sygnaly musza byc tej samej dlugosci.")
                     return
-                elif self.operationComboBox.currentIndex() == 6:
-                    result_signal = op_signal_1.direct_correlation(op_signal_2)
-                    values, chart1, chart2 = result_signal.generate_data()
-                    title = 'ID: ' + (self.id).__str__()
-                    self.show_sampled_window(title, values)
-                    self.signals_objects.append(result_signal)
+                result_signal = op_signal_1.add(op_signal_2)
+            elif self.operationComboBox.currentIndex() == 2:
+                if signal1.data.__len__() != signal2.data.__len__():
+                    QMessageBox.warning(self, "Warning", "Sygnaly musza byc tej samej dlugosci.")
                     return
-                elif self.operationComboBox.currentIndex() == 7:
-                    result_signal = op_signal_1.convolution_correlation(op_signal_2)
-                    values, chart1, chart2 = result_signal.generate_data()
-                    title = 'ID: ' + (self.id).__str__()
-                    self.show_sampled_window(title, values)
-                    self.signals_objects.append(result_signal)
+                result_signal = op_signal_1.subtract(op_signal_2)
+            elif self.operationComboBox.currentIndex() == 3:
+                if signal1.data.__len__() != signal2.data.__len__():
+                    QMessageBox.warning(self, "Warning", "Sygnaly musza byc tej samej dlugosci.")
                     return
-                values, chart1, chart2 = result_signal.generate_data(None)
+                result_signal = op_signal_1.multiply(op_signal_2)
+            elif self.operationComboBox.currentIndex() == 4:
+                if signal1.data.__len__() != signal2.data.__len__():
+                    QMessageBox.warning(self, "Warning", "Sygnaly musza byc tej samej dlugosci.")
+                    return
+                result_signal = op_signal_1.divide(op_signal_2)
+            elif self.operationComboBox.currentIndex() == 5:
+                result_signal = op_signal_1.convolve(op_signal_2, self.id)
+                values, chart1, chart2 = result_signal.generate_data()
                 title = 'ID: ' + (self.id).__str__()
-                self.signalsComboBox.addItem((self.id).__str__())
-                self.signalsComboBox2.addItem((self.id).__str__())
-                self.samplingComboBox.addItem((self.id).__str__())
-                self.show_data_window(title, None, result_signal)
+                self.show_sampled_window(title, values)
                 self.signals_objects.append(result_signal)
+                return
+            elif self.operationComboBox.currentIndex() == 6:
+                result_signal = op_signal_1.direct_correlation(op_signal_2)
+                values, chart1, chart2 = result_signal.generate_data()
+                title = 'ID: ' + (self.id).__str__()
+                self.show_sampled_window(title, values)
+                self.signals_objects.append(result_signal)
+                return
+            elif self.operationComboBox.currentIndex() == 7:
+                result_signal = op_signal_1.convolution_correlation(op_signal_2)
+                values, chart1, chart2 = result_signal.generate_data()
+                title = 'ID: ' + (self.id).__str__()
+                self.show_sampled_window(title, values)
+                self.signals_objects.append(result_signal)
+                return
+            values, chart1, chart2 = result_signal.generate_data(None)
+            title = 'ID: ' + (self.id).__str__()
+            self.signalsComboBox.addItem((self.id).__str__())
+            self.signalsComboBox2.addItem((self.id).__str__())
+            self.samplingComboBox.addItem((self.id).__str__())
+            self.show_data_window(title, None, result_signal)
+            self.signals_objects.append(result_signal)
         else:
             QMessageBox.warning(self, "Warning", "Trzeba wybrac dwa sygnaly.")
 
@@ -349,6 +363,5 @@ class MyGUI(QMainWindow):
                 print("Error reading file:", e)
 
     def analysis(self):
-        if self.signalsComboBox.currentIndex() != 0:
-            signal = self.signals_objects[self.signalsComboBox.currentIndex() - 1]
-            signal.analyze_signal()
+        analysis_gui = AnalysisGUI()
+        analysis_gui.show()

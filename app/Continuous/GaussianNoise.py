@@ -1,6 +1,6 @@
 import numpy as np
 
-from ContinuousSignal import ContinuousSignal
+from Continuous.ContinuousSignal import ContinuousSignal
 
 
 class GaussianNoise(ContinuousSignal):

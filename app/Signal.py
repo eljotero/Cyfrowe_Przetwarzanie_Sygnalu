@@ -157,7 +157,7 @@ class Signal:
         N = len(second_signal.data)
         result_data_length = M + N - 1
         result_indexes = list(range(result_data_length))
-        result_signal = SampledSignal([0] * result_data_length, result_indexes, result_data_length, id)
+        result_signal = SampledSignal([0] * result_data_length, result_indexes, result_data_length, id, self.f)
         for i in range(result_data_length):
             sum = 0.0
             start_k = max(0, i - N + 1)

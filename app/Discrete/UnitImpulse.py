@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 
-from DiscreteSignal import DiscreteSignal
+from Discrete.DiscreteSignal import DiscreteSignal
 
 
 class UnitImpulse(DiscreteSignal):

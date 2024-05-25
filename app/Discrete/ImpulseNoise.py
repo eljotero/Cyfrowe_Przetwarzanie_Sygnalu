@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from DiscreteSignal import DiscreteSignal
+from Discrete.DiscreteSignal import DiscreteSignal
 
 
 class ImpulseNoise(DiscreteSignal):

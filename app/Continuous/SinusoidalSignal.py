@@ -1,6 +1,6 @@
 import math
 
-from ContinuousSignal import ContinuousSignal
+from Continuous.ContinuousSignal import ContinuousSignal
 
 
 class SinusoidalSignal(ContinuousSignal):

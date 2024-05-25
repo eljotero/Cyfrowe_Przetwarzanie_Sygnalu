@@ -1,6 +1,6 @@
 import random
 
-from ContinuousSignal import ContinuousSignal
+from Continuous.ContinuousSignal import ContinuousSignal
 
 
 class UniformNoise(ContinuousSignal):

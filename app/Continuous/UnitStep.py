@@ -1,4 +1,4 @@
-from ContinuousSignal import ContinuousSignal
+from Continuous.ContinuousSignal import ContinuousSignal
 
 
 class UnitStep(ContinuousSignal):
