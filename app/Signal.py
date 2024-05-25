@@ -78,10 +78,18 @@ class Signal:
         return result_signal
 
     def sample(self, rate, id):
-        sample_step = int(len(self.data) / rate)
-        data = self.data[::sample_step]
-        indexes = self.indexes[::sample_step]
-        return SampledSignal(data, indexes, len(self.data), id)
+        new_data_x = []
+        new_data_y = []
+        jump = 1 / rate
+        duration = self.indexes[-1] - self.indexes[0]
+        samples = int(duration * rate)
+        t = 0
+        for i in range(samples):
+            new_data_x.append(t)
+            index = min(round(t * self.f), len(self.data) - 1)
+            new_data_y.append(self.data[index])
+            t += jump
+        return SampledSignal(new_data_y, new_data_x, len(self.data), id, rate)
 
     def quantize_uniform_truncation(data, indexes, num_levels):
         data_min = min(data)

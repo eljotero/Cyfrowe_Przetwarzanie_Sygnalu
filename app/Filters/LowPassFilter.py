@@ -3,12 +3,13 @@ import numpy as np
 
 class LowPassFilter:
 
-    def __init__(self, Fp, f, M, window_type):
+    def __init__(self, Fp, f, M, window_type, id):
         self.M = M
         self.f = f
         self.Fp = Fp
         self.window_type = window_type
         self.data = self.filter()
+        self.id = id
 
     def rectangular_window(self):
         return 1

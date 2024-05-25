@@ -2,8 +2,8 @@ from .LowPassFilter import LowPassFilter
 
 
 class HighPassFilter(LowPassFilter):
-    def __init__(self, Fp, f, M, window_type):
-        super().__init__(Fp, f, M, window_type)
+    def __init__(self, Fp, f, M, window_type, id):
+        super().__init__(Fp, f, M, window_type, id)
 
     def filter(self):
         low_pass_factors = super().filter()
