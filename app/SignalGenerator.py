@@ -1,10 +1,11 @@
 import struct
+
 import numpy as np
 from matplotlib import pyplot as plt
 
 
 class SignalGenerator:
-    def __init__(self, A, t1, d, f, bins=None, type=None):
+    def __init__(self, A, t1, d, f, bins=None, type=None, id=None):
         self.A = A
         self.t1 = t1
         self.d = d
@@ -16,6 +17,7 @@ class SignalGenerator:
         self.avg_power = None
         self.variance = None
         self.effect_value = None
+        self.id = id
         if bins is None:
             self.bins = 10
         elif bins in [5, 10, 15, 20]:

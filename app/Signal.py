@@ -7,7 +7,7 @@ from SampledSignal import SampledSignal
 
 
 class Signal:
-    def __init__(self, t1, f, data, indexes, type=None):
+    def __init__(self, t1, f, data, indexes, type=None, id=None):
         self.t1 = t1
         self.f = f
         if type is None:
@@ -16,6 +16,7 @@ class Signal:
             self.type = type
         self.data = data
         self.indexes = indexes
+        self.id = id
 
     @staticmethod
     def load_from_binary_file(filename):
@@ -76,11 +77,11 @@ class Signal:
             result_signal.data[i] = self.data[i] / second_signal.data[i]
         return result_signal
 
-    def sample(self, rate):
+    def sample(self, rate, id):
         sample_step = int(len(self.data) / rate)
         data = self.data[::sample_step]
         indexes = self.indexes[::sample_step]
-        return SampledSignal(data, indexes, len(self.data))
+        return SampledSignal(data, indexes, len(self.data), id)
 
     def quantize_uniform_truncation(data, indexes, num_levels):
         data_min = min(data)
@@ -143,23 +144,26 @@ class Signal:
         plt.savefig('chart.png')
         return plt
 
-    def convolve(self, second_signal):
-        result_signal = SampledSignal(self.data, self.indexes, len(self.data))
+    def convolve(self, second_signal, id):
         M = len(self.data)
-        for n in range(M):
-            sum = 0
-            for k in range(M):
-                if n - k < 0:
-                    continue
-                sum += self.data[k] * second_signal.data[n - k]
-            result_signal.data[n] = sum
+        N = len(second_signal.data)
+        result_data_length = M + N - 1
+        result_indexes = list(range(result_data_length))
+        result_signal = SampledSignal([0] * result_data_length, result_indexes, result_data_length, id)
+        for i in range(result_data_length):
+            sum = 0.0
+            start_k = max(0, i - N + 1)
+            end_k = min(M, i + 1)
+            for k in range(start_k, end_k):
+                sum += self.data[k] * second_signal.data[i - k]
+            result_signal.data[i] = sum
         return result_signal
 
     def direct_correlation(self, second_signal):
         M = len(self.data)
         N = len(second_signal.data)
-        result_indexes = [i * 1 / self.f for i in range(M + N - 1)]
-        result_signal = SampledSignal([0] * (M + N - 1), result_indexes, M + N - 1)
+        result_indexes = list(range(M + N - 1))
+        result_signal = SampledSignal([0] * (M + N - 1), result_indexes, M + N - 1, id=self.id)
 
         for i in range(M + N - 1):
             i = i - (N - 1)
@@ -172,4 +176,4 @@ class Signal:
     def convolution_correlation(self, second_signal):
         reversed_second_signal = Signal(second_signal.t1, second_signal.f, second_signal.data[::-1],
                                         second_signal.indexes)
-        return self.convolve(reversed_second_signal)
+        return self.convolve(reversed_second_signal, self.id)

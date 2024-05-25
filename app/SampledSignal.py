@@ -3,11 +3,12 @@ from matplotlib import pyplot as plt
 
 
 class SampledSignal:
-    def __init__(self, data, indexes, original_signal_len):
+    def __init__(self, data, indexes, original_signal_len, id):
         self.data = data
         self.indexes = indexes
         self.bins = 10
         self.original_signal_len = original_signal_len
+        self.id = id
 
     def generate_chart(self):
         plt.clf()
