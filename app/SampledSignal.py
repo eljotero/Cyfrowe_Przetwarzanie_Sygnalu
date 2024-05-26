@@ -5,13 +5,14 @@ from matplotlib import pyplot as plt
 
 
 class SampledSignal:
-    def __init__(self, data, indexes, original_signal_len, id, f):
+    def __init__(self, data, indexes, original_signal_len, id, f, end_time):
         self.data = data
         self.indexes = indexes
         self.bins = 10
         self.original_signal_len = original_signal_len
         self.id = id
         self.f = f
+        self.end_time = end_time
 
     def generate_chart(self):
         plt.clf()
@@ -50,12 +51,12 @@ class SampledSignal:
     def sinc_reconstruction(self, neigh_value):
         from Signal import Signal
         reconstructed_data = np.zeros(self.original_signal_len)
-        new_indexes = np.linspace(self.indexes[0], self.indexes[-1], num=self.original_signal_len)
+        new_indexes = np.linspace(self.indexes[0], self.end_time, num=self.original_signal_len)
         for t in range(self.original_signal_len):
             y = 0
             indices = np.argsort(np.abs(self.indexes - new_indexes[t]))[:neigh_value]
             for i in indices:
-                delta_t = new_indexes[t] - self.indexes[i]
+                delta_t = self.indexes[i] - new_indexes[t]
                 if delta_t == 0:
                     y += self.data[i]
                 else:

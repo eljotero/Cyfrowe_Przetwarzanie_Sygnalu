@@ -89,7 +89,7 @@ class Signal:
             index = min(round(t * self.f), len(self.data) - 1)
             new_data_y.append(self.data[index])
             t += jump
-        return SampledSignal(new_data_y, new_data_x, len(self.data), id, rate)
+        return SampledSignal(new_data_y, new_data_x, len(self.data), id, rate, self.indexes[-1])
 
     def quantize_uniform_truncation(data, indexes, num_levels):
         data_min = min(data)
