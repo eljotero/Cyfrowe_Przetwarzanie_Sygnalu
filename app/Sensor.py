@@ -74,9 +74,7 @@ class Sensor:
                 self.simulate_reflection()
                 self.sample_signals()
                 self.calculate_distance()
-                print(f"Odległość: {self.distance}")  # Move this inside the while loop
-                time.sleep(self.time_unit)
-            return self.plot_probe_signal(), self.plot_return_signal(), self.plot_correlation()
-
+                self.report_distance()
         thread = threading.Thread(target=run_in_background)
         thread.start()
+        return self.plot_probe_signal(), self.plot_return_signal(), self.plot_correlation()

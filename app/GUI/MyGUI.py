@@ -143,6 +143,14 @@ class MyGUI(QMainWindow):
                     if window_type == 0:
                         QMessageBox.warning(self, "Warning", "Window type must be selected.")
                         return
+                    signal = SignalClass(**params, id=self.id)
+                    values, chart1, chart2 = signal.generate_data()
+                    title = 'ID: ' + (self.id).__str__()
+                    self.signals_objects.append(signal)
+                    self.signalsComboBox.addItem((self.id).__str__())
+                    self.signalsComboBox2.addItem((self.id).__str__())
+                    self.show_sampled_window(title, values)
+                    return
                 signal = SignalClass(**params, id=self.id)
                 values, chart1, chart2 = signal.generate_data()
                 title = 'ID: ' + (self.id).__str__()
@@ -173,6 +181,7 @@ class MyGUI(QMainWindow):
     def show_sampled_window(self, title, values):
         sampled_gui = SampledGUI(title, values, parent=self)
         sampled_gui.id = self.id
+        self.id += 1
         self.sampled_windows.append(sampled_gui)
         sampled_gui.show()
 
@@ -315,7 +324,6 @@ class MyGUI(QMainWindow):
             selected_signal_id = str(int(self.samplingComboBox.currentText()) + 1)
             self.quantizeSignalComboBox.addItem(selected_signal_id)
             self.reconstructionSignalComboBox.addItem(selected_signal_id)
-            self.id += 1
 
     def quantize(self):
         if self.quantizeComboBox.currentIndex() != 0 and self.quantizeSignalComboBox.currentIndex() != 0 and float(

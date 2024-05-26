@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -14,6 +16,8 @@ class SampledSignal:
     def generate_chart(self):
         plt.clf()
         plt.scatter(self.indexes, self.data)
+        if os.path.exists('chart.png'):
+            os.remove('chart.png')
         plt.savefig('chart.png')
         return plt
 
