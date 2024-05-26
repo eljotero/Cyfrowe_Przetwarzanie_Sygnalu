@@ -4,6 +4,10 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 
+from Continuous.SinusoidalSignal import SinusoidalSignal
+from Continuous.SquareWave import SquareWave
+from Signal import Signal
+
 
 class Sensor:
     def __init__(self, time_unit, object_speed, signal_speed, signal_period, sampling_rate, buffer_length,
@@ -21,8 +25,16 @@ class Sensor:
 
     def generate_probe_signal(self):
         t = np.arange(self.buffer_length)
-        self.probe_signal_buffer = np.sin(2 * np.pi * t / self.signal_period) + np.sign(
-            np.sin(2 * np.pi * t / self.signal_period))
+        sinus_signal = SinusoidalSignal(A=1, T=self.signal_period, t1=0, d=5,
+                                        f=self.sampling_rate)
+        sinus_signal.generate_data()
+        square_wave = SquareWave(A=1, T=self.signal_period, t1=0, d=5,
+                                 f=self.sampling_rate, kw=0.5)
+        square_wave.generate_data()
+        signal_1 = Signal(t1=0, f=self.sampling_rate, data=sinus_signal.data, indexes=sinus_signal.indexes)
+        signal_2 = Signal(t1=0, f=self.sampling_rate, data=square_wave.data, indexes=square_wave.indexes)
+        result = signal_1.add(signal_2)
+        self.probe_signal_buffer = result.data
 
     def simulate_reflection(self):
         distance = self.object_speed * self.time_unit
@@ -34,7 +46,10 @@ class Sensor:
         self.return_signal_buffer = self.return_signal_buffer[:self.buffer_length]
 
     def calculate_distance(self):
-        correlation = np.correlate(self.probe_signal_buffer, self.return_signal_buffer, mode='full')
+        indexes = [i / self.sampling_rate for i in range(len(self.probe_signal_buffer))]
+        signal_1 = Signal(t1=0, f=self.sampling_rate, data=self.probe_signal_buffer, indexes=indexes)
+        signal_2 = Signal(t1=0, f=self.sampling_rate, data=self.return_signal_buffer, indexes=indexes)
+        correlation = signal_1.direct_correlation(signal_2)
         shift = np.argmax(correlation) - len(self.probe_signal_buffer) + 1
         self.distance = (shift * self.signal_speed * self.time_unit) / 2
 
@@ -46,7 +61,8 @@ class Sensor:
 
     def plot_probe_signal(self):
         plt.clf()
-        plt.plot(self.probe_signal_buffer)
+        x_values = np.arange(len(self.probe_signal_buffer))
+        plt.plot(x_values, self.probe_signal_buffer)
         plt.title('Probe Signal')
         plt.savefig('probe_signal.png')
         return plt
@@ -66,6 +82,7 @@ class Sensor:
         plt.savefig('correlation.png')
         return plt
 
+
     def generate_and_plot_signals(self):
         def run_in_background():
             start_time = time.time()
@@ -75,6 +92,7 @@ class Sensor:
                 self.sample_signals()
                 self.calculate_distance()
                 self.report_distance()
+
         thread = threading.Thread(target=run_in_background)
         thread.start()
         return self.plot_probe_signal(), self.plot_return_signal(), self.plot_correlation()
