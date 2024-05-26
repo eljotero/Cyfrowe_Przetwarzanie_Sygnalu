@@ -3,13 +3,13 @@ from matplotlib import pyplot as plt
 
 
 class SampledSignal:
-    def __init__(self, data, indexes, original_signal_len, id, rate):
+    def __init__(self, data, indexes, original_signal_len, id, f):
         self.data = data
         self.indexes = indexes
         self.bins = 10
         self.original_signal_len = original_signal_len
         self.id = id
-        self.rate = rate
+        self.f = f
 
     def generate_chart(self):
         plt.clf()
@@ -55,6 +55,6 @@ class SampledSignal:
                 if delta_t == 0:
                     y += self.data[i]
                 else:
-                    y += self.data[i] * np.sinc(delta_t / (1 / self.rate))
+                    y += self.data[i] * np.sinc(delta_t / (1 / self.f))
             reconstructed_data[t] = y
         return Signal(None, None, reconstructed_data, new_indexes, None)

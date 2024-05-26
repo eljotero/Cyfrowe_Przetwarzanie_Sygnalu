@@ -156,22 +156,22 @@ class Signal:
         M = len(self.data)
         N = len(second_signal.data)
         result_data_length = M + N - 1
-        result_indexes = list(range(result_data_length))
+        result_indexes = [i / self.f for i in range(result_data_length)]
         result_signal = SampledSignal([0] * result_data_length, result_indexes, result_data_length, id, self.f)
-        for i in range(result_data_length):
+        for i in range(0, result_data_length):
             sum = 0.0
-            start_k = max(0, i - N + 1)
-            end_k = min(M, i + 1)
-            for k in range(start_k, end_k):
-                sum += self.data[k] * second_signal.data[i - k]
+            for k in range(0, N):
+                if i - k >= 0 and i - k < M:
+                    sum += self.data[i - k] * second_signal.data[k]
             result_signal.data[i] = sum
         return result_signal
 
     def direct_correlation(self, second_signal):
         M = len(self.data)
         N = len(second_signal.data)
-        result_indexes = list(range(M + N - 1))
-        result_signal = SampledSignal([0] * (M + N - 1), result_indexes, M + N - 1, id=self.id)
+        result_data_length = M + N - 1
+        result_indexes = [i / self.f for i in range(result_data_length)]
+        result_signal = SampledSignal([0] * (M + N - 1), result_indexes, M + N - 1, id=self.id, f=self.f)
 
         for i in range(M + N - 1):
             i = i - (N - 1)

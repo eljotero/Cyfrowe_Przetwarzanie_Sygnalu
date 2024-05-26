@@ -37,7 +37,7 @@ class CompareGUI(QMainWindow):
             form_layout.addLayout(layout4)
             layout5 = QHBoxLayout()
             layout5.addWidget(QLabel("Efektywna liczba bitów"))
-            layout.addWidget(self.enob_line_edit)
+            layout5.addWidget(self.enob_line_edit)
             form_layout.addLayout(layout5)
             layout.addLayout(form_layout)
             self.mse_line_edit.setText(str(values[0]))

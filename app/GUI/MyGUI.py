@@ -27,6 +27,7 @@ class MyGUI(QMainWindow):
         super(MyGUI, self).__init__()
         uic.loadUi('gui.ui', self)
         self.show()
+        self.analysis_windows = []
         self.chart_windows = []
         self.signals_objects = []
         self.sampled_signals = []
@@ -174,6 +175,11 @@ class MyGUI(QMainWindow):
         sampled_gui.id = self.id
         self.sampled_windows.append(sampled_gui)
         sampled_gui.show()
+
+    def analysis(self):
+        analysis_gui = AnalysisGUI()
+        self.analysis_windows.append(analysis_gui)
+        analysis_gui.show()
 
     def remove_chart_window(self, id):
         id_str = str(id)
@@ -361,7 +367,3 @@ class MyGUI(QMainWindow):
                 self.samplingComboBox.addItem((self.chart_windows.__len__()).__str__())
             except Exception as e:
                 print("Error reading file:", e)
-
-    def analysis(self):
-        analysis_gui = AnalysisGUI()
-        analysis_gui.show()
