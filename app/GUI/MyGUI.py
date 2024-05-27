@@ -16,7 +16,6 @@ from Filters.BandPassFilter import BandPassFilter
 from Filters.HighPassFilter import HighPassFilter
 from Filters.LowPassFilter import LowPassFilter
 from Signal import Signal
-from .AnalisysGUI import AnalysisGUI
 from .CompareGUI import CompareGUI
 from .DataGUI import DataGui
 from .SampledGUI import SampledGUI
@@ -40,7 +39,6 @@ class MyGUI(QMainWindow):
         self.quantizeButton.clicked.connect(self.quantize)
         self.reconstructionButton.clicked.connect(self.reconstruct_signal)
         self.readFromFileButton.clicked.connect(self.read_from_file)
-        self.analysisButton.clicked.connect(self.analysis)
         self.id = 1
         self.combobox_mapping_line_edit = {
             1: [self.a_line_edit, self.t1_line_edit, self.d_line_edit, self.f_line_edit, self.bins_line_edit],
@@ -184,11 +182,6 @@ class MyGUI(QMainWindow):
         self.id += 1
         self.sampled_windows.append(sampled_gui)
         sampled_gui.show()
-
-    def analysis(self):
-        analysis_gui = AnalysisGUI()
-        self.analysis_windows.append(analysis_gui)
-        analysis_gui.show()
 
     def remove_chart_window(self, id):
         id_str = str(id)
