@@ -1,12 +1,12 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from DiscreteSignal import DiscreteSignal
+from Discrete.DiscreteSignal import DiscreteSignal
 
 
 class ImpulseNoise(DiscreteSignal):
-    def __init__(self, A, t1, d, f, p, bins=None, signal_type=None):
-        super().__init__(A, t1, d, f, bins, signal_type)
+    def __init__(self, A, t1, d, f, p, bins=None, signal_type=None, id=None):
+        super().__init__(A, t1, d, f, bins, signal_type, id)
         self.A = A
         self.t1 = t1
         self.d = d
@@ -14,7 +14,7 @@ class ImpulseNoise(DiscreteSignal):
         self.p = p / 100
 
     def generate_data(self):
-        for i in range(self.d * self.f):
+        for i in range(int(self.d * self.f)):
             t = self.t1 + i / self.f
             self.data.append(self.calculate_data(t))
             self.indexes.append(t)

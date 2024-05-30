@@ -3,8 +3,8 @@ from SignalGenerator import SignalGenerator
 
 
 class ContinuousSignal(SignalGenerator):
-    def __init__(self, A, t1, d, f, bins=None, signal_type=None):
-        super().__init__(A, t1, d, f, bins, signal_type)
+    def __init__(self, A, t1, d, f, bins=None, signal_type=None, id=None):
+        super().__init__(A, t1, d, f, bins, signal_type, id)
 
     def calculate_values(self):
         self.avg_value = 1 / (self.indexes[-1] - self.indexes[0]) * np.trapz(self.data, self.indexes)

@@ -7,7 +7,7 @@ from SampledSignal import SampledSignal
 
 
 class Signal:
-    def __init__(self, t1, f, data, indexes, type=None):
+    def __init__(self, t1, f, data, indexes, type=None, id=None):
         self.t1 = t1
         self.f = f
         if type is None:
@@ -16,6 +16,7 @@ class Signal:
             self.type = type
         self.data = data
         self.indexes = indexes
+        self.id = id
 
     @staticmethod
     def load_from_binary_file(filename):
@@ -76,11 +77,19 @@ class Signal:
             result_signal.data[i] = self.data[i] / second_signal.data[i]
         return result_signal
 
-    def sample(self, rate):
-        sample_step = int(len(self.data) / rate)
-        data = self.data[::sample_step]
-        indexes = self.indexes[::sample_step]
-        return SampledSignal(data, indexes, len(self.data))
+    def sample(self, rate, id):
+        new_data_x = []
+        new_data_y = []
+        jump = 1 / rate
+        duration = self.indexes[-1] - self.indexes[0]
+        samples = int(duration * rate) + 1
+        t = 0
+        for i in range(samples):
+            new_data_x.append(t)
+            index = min(round(t * self.f), len(self.data) - 1)
+            new_data_y.append(self.data[index])
+            t += jump
+        return SampledSignal(new_data_y, new_data_x, len(self.data), id, rate, self.indexes[-1])
 
     def quantize_uniform_truncation(data, indexes, num_levels):
         data_min = min(data)
@@ -121,7 +130,7 @@ class Signal:
             plt.step(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal')
         if case == 2:
             plt.step(reconstructed_signal.indexes, reconstructed_signal.data, label='Quantized signal')
-        if case is None:
+        if case == 3:
             plt.plot(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal')
         plt.legend()
         plt.savefig('comparison_chart.png')
@@ -134,10 +143,47 @@ class Signal:
         peak_signal = np.max(original_signal)
         psnr = 20 * np.log10(peak_signal / np.sqrt(mse))
         md = np.max(np.abs(original_signal - reconstructed_signal))
-        return [mse, snr, psnr, md]
+        enob = (snr - 1.76) / 6.02
+        return [mse, snr, psnr, md, enob]
 
     def generate_quantize_chart(self):
         plt.clf()
         plt.step(self.indexes, self.data, label='Original signal')
         plt.savefig('chart.png')
         return plt
+
+    def convolve(self, second_signal, id):
+        M = len(self.data)
+        N = len(second_signal.data)
+        result_data_length = M + N - 1
+        result_indexes = [i / self.f for i in range(result_data_length)]
+        result_signal = SampledSignal([0] * result_data_length, result_indexes, result_data_length, id, self.f,
+                                      end_time=self.indexes[-1])
+        for i in range(0, result_data_length):
+            sum = 0.0
+            for k in range(0, N):
+                if i - k >= 0 and i - k < M:
+                    sum += self.data[i - k] * second_signal.data[k]
+            result_signal.data[i] = sum
+        return result_signal
+
+    def direct_correlation(self, second_signal):
+        M = len(self.data)
+        N = len(second_signal.data)
+        result_data_length = M + N - 1
+        result_indexes = [i / self.f for i in range(result_data_length)]
+        result_signal = SampledSignal([0] * (M + N - 1), result_indexes, M + N - 1, id=self.id, f=self.f,
+                                      end_time=self.indexes[-1])
+
+        for i in range(M + N - 1):
+            i = i - (N - 1)
+            start_k = max(0, i)
+            end_k = min(M, N + i)
+            for k in range(start_k, end_k):
+                result_signal.data[i + N - 1] += self.data[k] * second_signal.data[k - i]
+        return result_signal
+
+    def convolution_correlation(self, second_signal):
+        reversed_second_signal = Signal(second_signal.t1, second_signal.f, second_signal.data[::-1],
+                                        second_signal.indexes)
+        return self.convolve(reversed_second_signal, self.id)

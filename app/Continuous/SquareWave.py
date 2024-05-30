@@ -1,11 +1,11 @@
 import math
 
-from ContinuousSignal import ContinuousSignal
+from Continuous.ContinuousSignal import ContinuousSignal
 
 
 class SquareWave(ContinuousSignal):
-    def __init__(self, A, T, t1, d, f, kw, bins=None, signal_type=None):
-        super().__init__(A, t1, d, f, bins, signal_type)
+    def __init__(self, A, T, t1, d, f, kw, bins=None, signal_type=None, id=None):
+        super().__init__(A, t1, d, f, bins, signal_type, id)
         self.T = T
         self.kw = kw
 

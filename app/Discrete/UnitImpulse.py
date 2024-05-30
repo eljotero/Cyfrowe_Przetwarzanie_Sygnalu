@@ -1,21 +1,21 @@
 from matplotlib import pyplot as plt
 
-from DiscreteSignal import DiscreteSignal
+from Discrete.DiscreteSignal import DiscreteSignal
 
 
 class UnitImpulse(DiscreteSignal):
-    def __init__(self, A, ns, n1, l, f, bins=None, signal_type=None):
-        super().__init__(A, f, n1, l, bins=bins, signal_type=signal_type)
+    def __init__(self, A, ns, n1, l, f, bins=None, signal_type=None, id=None):
+        super().__init__(A, f, n1, l, bins=bins, signal_type=signal_type, id=id)
         self.l = l
         self.f = f
         self.ns = ns
         self.n1 = n1
 
     def generate_data(self):
-        for i in range(self.l * self.f):
+        for i in range(int(self.l * self.f)):
             t = self.n1 + i / self.f
             if i == self.ns:
-                self.data.append(1)
+                self.data.append(self.A)
             else:
                 self.data.append(0)
             self.indexes.append(t)

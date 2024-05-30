@@ -1,17 +1,24 @@
+import os
+
 import numpy as np
 from matplotlib import pyplot as plt
 
 
 class SampledSignal:
-    def __init__(self, data, indexes, original_signal_len):
+    def __init__(self, data, indexes, original_signal_len, id, f, end_time):
         self.data = data
         self.indexes = indexes
         self.bins = 10
         self.original_signal_len = original_signal_len
+        self.id = id
+        self.f = f
+        self.end_time = end_time
 
     def generate_chart(self):
         plt.clf()
         plt.scatter(self.indexes, self.data)
+        if os.path.exists('chart.png'):
+            os.remove('chart.png')
         plt.savefig('chart.png')
         return plt
 
@@ -41,14 +48,18 @@ class SampledSignal:
         reconstructed_data = np.interp(new_indexes, self.indexes, self.data)
         return Signal(None, None, reconstructed_data, new_indexes, None)
 
-    def sinc_reconstruction(self, n_value):
+    def sinc_reconstruction(self, neigh_value):
         from Signal import Signal
         reconstructed_data = np.zeros(self.original_signal_len)
-        new_indexes = np.linspace(self.indexes[0], self.indexes[-1], num=self.original_signal_len)
+        new_indexes = np.linspace(self.indexes[0], self.end_time, num=self.original_signal_len)
         for t in range(self.original_signal_len):
             y = 0
-            for i in range(len(self.data)):
-                delta_t = new_indexes[t] - self.indexes[i]
-                y += self.data[i] * np.sinc(delta_t * n_value)
+            indices = np.argsort(np.abs(self.indexes - new_indexes[t]))[:neigh_value]
+            for i in indices:
+                delta_t = self.indexes[i] - new_indexes[t]
+                if delta_t == 0:
+                    y += self.data[i]
+                else:
+                    y += self.data[i] * np.sinc(delta_t / (1 / self.f))
             reconstructed_data[t] = y
         return Signal(None, None, reconstructed_data, new_indexes, None)

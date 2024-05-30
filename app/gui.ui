@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>970</width>
-    <height>700</height>
+    <width>1059</width>
+    <height>732</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>280</x>
       <y>10</y>
-      <width>171</width>
-      <height>321</height>
+      <width>241</width>
+      <height>411</height>
      </rect>
     </property>
     <layout class="QFormLayout" name="formLayout">
@@ -28,6 +28,13 @@
       <widget class="QLabel" name="label">
        <property name="text">
         <string>A</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="a_line_edit">
+       <property name="enabled">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -171,13 +178,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="a_line_edit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
      <item row="13" column="0">
       <widget class="QLabel" name="label_12">
        <property name="text">
@@ -190,6 +190,73 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+      </widget>
+     </item>
+     <item row="14" column="0">
+      <widget class="QLabel" name="label_18">
+       <property name="text">
+        <string>Rząd filtra</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1">
+      <widget class="QLineEdit" name="m_line_edit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="0">
+      <widget class="QLabel" name="label_20">
+       <property name="text">
+        <string>Częstotliwość odcięcia</string>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="1">
+      <widget class="QLineEdit" name="fp_line_edit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="0">
+      <widget class="QLabel" name="label_21">
+       <property name="text">
+        <string>Wybór okna</string>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="1">
+      <widget class="QComboBox" name="windowComboBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <item>
+        <property name="text">
+         <string>Wybierz typ okna</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Okno prostokątne</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Okno Hamminga</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Okno Hanninga</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Okno Blackmana</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -266,11 +333,26 @@
       <string>Szum impulsowy</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>Filtr dolnoprzepustowy</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Filtr pasmowy</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Filtr górnoprzepustowy</string>
+     </property>
+    </item>
    </widget>
    <widget class="QPushButton" name="generateButton">
     <property name="geometry">
      <rect>
-      <x>610</x>
+      <x>590</x>
       <y>20</y>
       <width>191</width>
       <height>81</height>
@@ -283,8 +365,8 @@
    <widget class="QComboBox" name="operationComboBox">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>370</y>
+      <x>830</x>
+      <y>20</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -314,12 +396,27 @@
       <string>Dzielenie</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>Operacja splotu</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Korelacja bezpośrednia</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Korelacja z użyciem splotu</string>
+     </property>
+    </item>
    </widget>
    <widget class="QComboBox" name="signalsComboBox">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>370</y>
+      <x>830</x>
+      <y>90</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -333,8 +430,8 @@
    <widget class="QPushButton" name="operationButton">
     <property name="geometry">
      <rect>
-      <x>690</x>
-      <y>370</y>
+      <x>830</x>
+      <y>240</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -346,8 +443,8 @@
    <widget class="QComboBox" name="signalsComboBox2">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>370</y>
+      <x>830</x>
+      <y>170</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -361,8 +458,8 @@
    <widget class="QPushButton" name="readFromFileButton">
     <property name="geometry">
      <rect>
-      <x>610</x>
-      <y>140</y>
+      <x>590</x>
+      <y>120</y>
       <width>191</width>
       <height>81</height>
      </rect>
@@ -374,8 +471,8 @@
    <widget class="QComboBox" name="samplingComboBox">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>440</y>
+      <x>110</x>
+      <y>470</y>
       <width>141</width>
       <height>51</height>
      </rect>
@@ -389,8 +486,8 @@
    <widget class="QLabel" name="samplingText">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>450</y>
+      <x>30</x>
+      <y>480</y>
       <width>81</width>
       <height>31</height>
      </rect>
@@ -402,8 +499,8 @@
    <widget class="QLineEdit" name="samplingRate_line_edit">
     <property name="geometry">
      <rect>
-      <x>420</x>
-      <y>460</y>
+      <x>410</x>
+      <y>490</y>
       <width>113</width>
       <height>20</height>
      </rect>
@@ -413,7 +510,7 @@
     <property name="geometry">
      <rect>
       <x>270</x>
-      <y>460</y>
+      <y>490</y>
       <width>151</width>
       <height>16</height>
      </rect>
@@ -425,8 +522,8 @@
    <widget class="QPushButton" name="sampleButton">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>450</y>
+      <x>560</x>
+      <y>480</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -438,8 +535,8 @@
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>520</y>
+      <x>30</x>
+      <y>540</y>
       <width>71</width>
       <height>31</height>
      </rect>
@@ -451,8 +548,8 @@
    <widget class="QComboBox" name="quantizeComboBox">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>510</y>
+      <x>100</x>
+      <y>530</y>
       <width>161</width>
       <height>51</height>
      </rect>
@@ -476,8 +573,8 @@
    <widget class="QLabel" name="num_level_label">
     <property name="geometry">
      <rect>
-      <x>260</x>
-      <y>530</y>
+      <x>270</x>
+      <y>540</y>
       <width>141</width>
       <height>16</height>
      </rect>
@@ -489,8 +586,8 @@
    <widget class="QLineEdit" name="num_level_line_edit">
     <property name="geometry">
      <rect>
-      <x>400</x>
-      <y>530</y>
+      <x>410</x>
+      <y>540</y>
       <width>113</width>
       <height>20</height>
      </rect>
@@ -499,8 +596,8 @@
    <widget class="QPushButton" name="quantizeButton">
     <property name="geometry">
      <rect>
-      <x>830</x>
-      <y>520</y>
+      <x>840</x>
+      <y>530</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -512,8 +609,8 @@
    <widget class="QLabel" name="label_15">
     <property name="geometry">
      <rect>
-      <x>520</x>
-      <y>530</y>
+      <x>530</x>
+      <y>540</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -525,8 +622,8 @@
    <widget class="QComboBox" name="quantizeSignalComboBox">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>530</y>
+      <x>680</x>
+      <y>540</y>
       <width>151</width>
       <height>22</height>
      </rect>
@@ -540,8 +637,8 @@
    <widget class="QPushButton" name="reconstructionButton">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>640</y>
+      <x>860</x>
+      <y>600</y>
       <width>201</width>
       <height>31</height>
      </rect>
@@ -553,8 +650,8 @@
    <widget class="QLabel" name="label_16">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>600</y>
+      <x>30</x>
+      <y>610</y>
       <width>121</width>
       <height>16</height>
      </rect>
@@ -567,7 +664,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>600</y>
+      <y>610</y>
       <width>151</width>
       <height>22</height>
      </rect>
@@ -596,8 +693,8 @@
    <widget class="QLabel" name="label_17">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>600</y>
+      <x>320</x>
+      <y>610</y>
       <width>161</width>
       <height>16</height>
      </rect>
@@ -609,8 +706,8 @@
    <widget class="QComboBox" name="reconstructionSignalComboBox">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>600</y>
+      <x>480</x>
+      <y>610</y>
       <width>151</width>
       <height>22</height>
      </rect>
@@ -621,25 +718,25 @@
      </property>
     </item>
    </widget>
-   <widget class="QLabel" name="label_18">
+   <widget class="QLabel" name="label_19">
     <property name="geometry">
      <rect>
-      <x>620</x>
-      <y>600</y>
-      <width>171</width>
+      <x>650</x>
+      <y>610</y>
+      <width>91</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Wartość n dla funkcji sinc</string>
+     <string>Liczba sąsiadów:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="sinc_t_line_edit">
+   <widget class="QLineEdit" name="neig_line_edit">
     <property name="geometry">
      <rect>
-      <x>760</x>
-      <y>600</y>
-      <width>111</width>
+      <x>740</x>
+      <y>610</y>
+      <width>113</width>
       <height>20</height>
      </rect>
     </property>
