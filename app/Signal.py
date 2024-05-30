@@ -82,7 +82,7 @@ class Signal:
         new_data_y = []
         jump = 1 / rate
         duration = self.indexes[-1] - self.indexes[0]
-        samples = int(duration * rate)
+        samples = int(duration * rate) + 1
         t = 0
         for i in range(samples):
             new_data_x.append(t)
