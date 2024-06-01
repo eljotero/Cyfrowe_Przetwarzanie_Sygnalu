@@ -200,6 +200,7 @@ class MyGUI(QMainWindow):
                 break
         if index_to_remove is not None:
             self.chart_windows.pop(index_to_remove)
+        self.signals_objects.pop(index_to_remove)
 
     def remove_compare_window(self, id):
         if len(self.compare_windows) > 0:
@@ -238,8 +239,8 @@ class MyGUI(QMainWindow):
 
     def operation(self):
         if self.signalsComboBox.currentIndex() != 0 and self.signalsComboBox2.currentIndex() != 0:
-            signal1 = self.signals_objects[self.signalsComboBox.currentIndex() - 1]
-            signal2 = self.signals_objects[self.signalsComboBox2.currentIndex() - 1]
+            signal1 = self.find_signal_by_id(int(self.signalsComboBox.currentText()))
+            signal2 = self.find_signal_by_id(int(self.signalsComboBox2.currentText()))
             op_signal_1 = Signal(getattr(signal1, 't1', None),
                                  getattr(signal1, 'f', None),
                                  getattr(signal1, 'data', None),
@@ -304,31 +305,31 @@ class MyGUI(QMainWindow):
 
     def sampling(self):
         if self.samplingComboBox.currentIndex() != 0:
-            signal = self.signals_objects[self.samplingComboBox.currentIndex() - 1]
+            signal = self.find_signal_by_id(int(self.samplingComboBox.currentText()))
             op_signal = Signal(signal.t1, signal.f, signal.data, signal.indexes, signal.type)
             new_signal = op_signal.sample(float(self.samplingRate_line_edit.text()), id=self.id)
             values, chart1, chart2 = new_signal.generate_data()
             title = 'ID: ' + (self.id).__str__()
-            self.show_sampled_window(title, values)
-            self.sampled_signals.append(new_signal)
-            self.signals_objects.append(new_signal)
             self.signalsComboBox.addItem((self.id).__str__())
             self.signalsComboBox2.addItem((self.id).__str__())
-            selected_signal_id = str(int(self.samplingComboBox.currentText()) + 1)
+            selected_signal_id = str(int(self.samplingComboBox.currentText()))
             self.quantizeSignalComboBox.addItem(selected_signal_id)
             self.reconstructionSignalComboBox.addItem(selected_signal_id)
+            self.sampled_signals.append(new_signal)
+            self.signals_objects.append(new_signal)
+            self.show_sampled_window(title, values)
 
     def quantize(self):
         if self.quantizeComboBox.currentIndex() != 0 and self.quantizeSignalComboBox.currentIndex() != 0 and float(
                 self.num_level_line_edit.text()) != 0:
             signal = self.sampled_signals[self.quantizeSignalComboBox.currentIndex() - 1]
+            original_signal = self.sampled_signals[self.samplingComboBox.currentIndex() - 1]
             if self.quantizeComboBox.currentIndex() == 1:
                 new_signal = Signal.quantize_uniform_truncation(signal.data, signal.indexes,
                                                                 float(self.num_level_line_edit.text()))
             elif self.quantizeComboBox.currentIndex() == 2:
                 new_signal = Signal.quantize_uniform_rounding(signal.data, signal.indexes,
                                                               float(self.num_level_line_edit.text()))
-            original_signal = self.sampled_signals[self.samplingComboBox.currentIndex() - 1]
             original_signal_2 = Signal(None, None, original_signal.data,
                                        original_signal.indexes, None)
             values = original_signal_2.compare_signals(new_signal, 2)
@@ -344,7 +345,7 @@ class MyGUI(QMainWindow):
                 reconstructed_signal = signal.first_order_interpolation_reconstruction()
             elif self.reconstructionTypeComboBox.currentIndex() == 3 and self.neig_line_edit.text() != "":
                 reconstructed_signal = signal.sinc_reconstruction(int(self.neig_line_edit.text()))
-            original_signal = self.signals_objects[self.samplingComboBox.currentIndex() - 1]
+            original_signal = self.find_signal_by_id(int(self.samplingComboBox.currentText()))
             original_signal_2 = Signal(original_signal.t1, original_signal.f, original_signal.data,
                                        original_signal.indexes, original_signal.type)
             if self.reconstructionTypeComboBox.currentIndex() == 1:
@@ -368,3 +369,9 @@ class MyGUI(QMainWindow):
                 self.samplingComboBox.addItem((self.chart_windows.__len__()).__str__())
             except Exception as e:
                 print("Error reading file:", e)
+
+    def find_signal_by_id(self, id):
+        for signal in self.signals_objects:
+            if signal.id == id:
+                return signal
+        return None

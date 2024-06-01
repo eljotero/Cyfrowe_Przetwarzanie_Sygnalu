@@ -127,9 +127,9 @@ class Signal:
         plt.clf()
         plt.plot(self.indexes, self.data, label='Original signal')
         if case == 1:
-            plt.step(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal')
+            plt.step(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal', where='post')
         if case == 2:
-            plt.step(reconstructed_signal.indexes, reconstructed_signal.data, label='Quantized signal')
+            plt.step(reconstructed_signal.indexes, reconstructed_signal.data, label='Quantized signal', where='post')
         if case == 3:
             plt.plot(reconstructed_signal.indexes, reconstructed_signal.data, label='Reconstructed signal')
         plt.legend()
