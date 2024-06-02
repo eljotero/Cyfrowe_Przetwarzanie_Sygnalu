@@ -64,12 +64,3 @@ class Sensor:
             reports.append(report)
             print("\n")
         return reports
-
-
-# def main():
-#     sensor = Sensor(10, 10, 30000, 1, 1000, 1000, 2, 20)
-#     sensor.simulation()
-#
-#
-# if __name__ == '__main__':
-#     main()

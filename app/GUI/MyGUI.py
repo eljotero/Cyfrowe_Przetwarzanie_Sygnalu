@@ -314,9 +314,8 @@ class MyGUI(QMainWindow):
             title = 'ID: ' + (self.id).__str__()
             self.signalsComboBox.addItem((self.id).__str__())
             self.signalsComboBox2.addItem((self.id).__str__())
-            selected_signal_id = str(int(self.samplingComboBox.currentText()))
-            self.quantizeSignalComboBox.addItem(selected_signal_id)
-            self.reconstructionSignalComboBox.addItem(selected_signal_id)
+            self.quantizeSignalComboBox.addItem((self.id).__str__())
+            self.reconstructionSignalComboBox.addItem((self.id).__str__())
             self.sampled_signals.append(new_signal)
             self.signals_objects.append(new_signal)
             self.show_sampled_window(title, values)
@@ -324,8 +323,8 @@ class MyGUI(QMainWindow):
     def quantize(self):
         if self.quantizeComboBox.currentIndex() != 0 and self.quantizeSignalComboBox.currentIndex() != 0 and float(
                 self.num_level_line_edit.text()) != 0:
-            signal = self.sampled_signals[self.quantizeSignalComboBox.currentIndex() - 1]
-            original_signal = self.sampled_signals[self.samplingComboBox.currentIndex() - 1]
+            signal = self.find_sampled_signal_by_id(int(self.quantizeSignalComboBox.currentText()))
+            original_signal = self.find_sampled_signal_by_id(int(self.quantizeSignalComboBox.currentText()))
             if self.quantizeComboBox.currentIndex() == 1:
                 new_signal = Signal.quantize_uniform_truncation(signal.data, signal.indexes,
                                                                 float(self.num_level_line_edit.text()))
@@ -374,6 +373,12 @@ class MyGUI(QMainWindow):
 
     def find_signal_by_id(self, id):
         for signal in self.signals_objects:
+            if signal.id == id:
+                return signal
+        return None
+
+    def find_sampled_signal_by_id(self, id):
+        for signal in self.sampled_signals:
             if signal.id == id:
                 return signal
         return None

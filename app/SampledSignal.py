@@ -37,7 +37,7 @@ class SampledSignal:
         new_indexes = np.linspace(self.indexes[0], self.indexes[-1], num=self.original_signal_len)
         j = 0
         for i in range(self.original_signal_len):
-            while j < len(self.indexes) - 1 and new_indexes[i] >= self.indexes[j + 1]:
+            while j < len(self.indexes) - 1 and self.indexes[j + 1] < new_indexes[i]:
                 j += 1
             reconstructed_signal[i] = self.data[j]
         return Signal(None, None, reconstructed_signal, new_indexes, None)
@@ -54,8 +54,8 @@ class SampledSignal:
         new_indexes = np.linspace(self.indexes[0], self.end_time, num=self.original_signal_len)
         for t in range(self.original_signal_len):
             y = 0
-            indices = np.argsort(np.abs(self.indexes - new_indexes[t]))[:neigh_value]
-            for i in indices:
+            neighbours = np.argsort(np.abs(self.indexes - new_indexes[t]))[:neigh_value]
+            for i in neighbours:
                 delta_t = self.indexes[i] - new_indexes[t]
                 if delta_t == 0:
                     y += self.data[i]
