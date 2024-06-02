@@ -741,6 +741,19 @@
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="analysisButton">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>220</y>
+      <width>191</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Analiza korelacyjna</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
