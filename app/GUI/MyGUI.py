@@ -282,19 +282,20 @@ class MyGUI(QMainWindow):
                 self.signals_objects.append(result_signal)
                 return
             elif self.operationComboBox.currentIndex() == 6:
-                result_signal = op_signal_1.direct_correlation(op_signal_2)
+                result_signal = op_signal_1.direct_correlation(op_signal_2, self.id)
                 values, chart1, chart2 = result_signal.generate_data()
                 title = 'ID: ' + (self.id).__str__()
                 self.show_sampled_window(title, values)
                 self.signals_objects.append(result_signal)
                 return
             elif self.operationComboBox.currentIndex() == 7:
-                result_signal = op_signal_1.convolution_correlation(op_signal_2)
+                result_signal = op_signal_1.convolution_correlation(op_signal_2, self.id)
                 values, chart1, chart2 = result_signal.generate_data()
                 title = 'ID: ' + (self.id).__str__()
                 self.show_sampled_window(title, values)
                 self.signals_objects.append(result_signal)
                 return
+            result_signal.id = self.id
             values, chart1, chart2 = result_signal.generate_data(None)
             title = 'ID: ' + (self.id).__str__()
             self.signalsComboBox.addItem((self.id).__str__())
@@ -362,6 +363,7 @@ class MyGUI(QMainWindow):
         if fname:
             try:
                 signal = Signal.load_from_binary_file(fname[0])
+                signal.id = self.id
                 title = 'ID: ' + (self.id).__str__()
                 self.show_data_window(title, None, signal)
                 self.signals_objects.append(signal)

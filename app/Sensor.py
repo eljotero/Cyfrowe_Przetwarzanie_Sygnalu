@@ -46,7 +46,7 @@ class Sensor:
             report = []
             print("Current distance: ", self.distance)
             self.generate_return_signal()
-            correlation_signal = self.return_signal.direct_correlation(self.final_signal)
+            correlation_signal = self.return_signal.direct_correlation(self.final_signal, None)
             right_half = correlation_signal.data[len(correlation_signal.data) // 2:]
             max_index_right_half = np.argmax(right_half)
             time_delay = correlation_signal.indexes[len(correlation_signal.indexes) // 2 + max_index_right_half] - \

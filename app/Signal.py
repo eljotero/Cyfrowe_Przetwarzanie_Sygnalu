@@ -167,12 +167,12 @@ class Signal:
             result_signal.data[i] = sum
         return result_signal
 
-    def direct_correlation(self, second_signal):
+    def direct_correlation(self, second_signal, id):
         M = len(self.data)
         N = len(second_signal.data)
         result_data_length = M + N - 1
         result_indexes = [i / self.f for i in range(result_data_length)]
-        result_signal = SampledSignal([0] * (M + N - 1), result_indexes, M + N - 1, id=self.id, f=self.f,
+        result_signal = SampledSignal([0] * (M + N - 1), result_indexes, M + N - 1, id=id, f=self.f,
                                       end_time=self.indexes[-1])
 
         for i in range(M + N - 1):
@@ -183,7 +183,7 @@ class Signal:
                 result_signal.data[i + N - 1] += self.data[k] * second_signal.data[k - i]
         return result_signal
 
-    def convolution_correlation(self, second_signal):
+    def convolution_correlation(self, second_signal, id):
         reversed_second_signal = Signal(second_signal.t1, second_signal.f, second_signal.data[::-1],
                                         second_signal.indexes)
-        return self.convolve(reversed_second_signal, self.id)
+        return self.convolve(reversed_second_signal, id)

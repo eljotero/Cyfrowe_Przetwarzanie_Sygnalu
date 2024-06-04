@@ -9,6 +9,7 @@ class DataGui(QMainWindow):
         uic.loadUi('datagui.ui', self)
         self.setWindowTitle(title)
         self.id = None
+        self.signal = signal
         label = QLabel(self)
         label2 = QLabel(self)
         pixmap = QPixmap('./chart.png')
@@ -57,17 +58,17 @@ class DataGui(QMainWindow):
             self.var_value_line_edit.setStyleSheet("border: 1px solid black;")
             self.eff_val_line_edit.setStyleSheet("border: 1px solid black;")
         save_button = QPushButton("Zapisz")
-        save_button.clicked.connect(lambda: self.save_file(signal))
+        save_button.clicked.connect(self.save_file)
         layout.addWidget(save_button)
         central_widget = QWidget()
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
         self.closeEvent = self.closeEvent
 
-    def save_file(self, signal):
+    def save_file(self):
         fname = QFileDialog.getSaveFileName(self, 'Save file', 'c:\\', "Binary files (*.bin)")
         if fname:
-            signal.save_to_binary_file(fname[0])
+            self.signal.save_to_binary_file(fname[0])
 
     def closeEvent(self, event):
         self.parent().remove_chart_window(self.id)
