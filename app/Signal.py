@@ -31,7 +31,9 @@ class Signal:
             num_samples = struct.unpack('<i', file.read(4))[0]
             data = [struct.unpack('<d', file.read(8))[0] for _ in range(num_samples)]
             indexes = np.array([t1 + i / f for i in range(len(data))])
-            return Signal(t1, f, data, indexes, type)
+            signal = Signal(t1, f, data, indexes, type)
+            signal.generate_data(None)
+            return signal
 
     def save_to_binary_file(self, filename):
         with open(filename, 'wb') as file:
