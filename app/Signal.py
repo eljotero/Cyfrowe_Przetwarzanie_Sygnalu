@@ -29,7 +29,9 @@ class Signal:
             else:
                 type = "float"
             num_samples = struct.unpack('<i', file.read(4))[0]
-            data = [struct.unpack('<d', file.read(8))[0] for _ in range(num_samples)]
+            data = [struct.unpack('<d', file.read(8))[0] + 1j * struct.unpack('<d', file.read(8))[0] for _ in
+                    range(num_samples)] if type == "complex" else [struct.unpack('<d', file.read(8))[0] for _ in
+                                                                   range(num_samples)]
             indexes = np.array([t1 + i / f for i in range(len(data))])
             signal = Signal(t1, f, data, indexes, type)
             signal.generate_data(None)
@@ -45,7 +47,11 @@ class Signal:
                 file.write(struct.pack('<i', 0))
             file.write(struct.pack('<i', len(self.data)))
             for value in self.data:
-                file.write(struct.pack('<d', value))
+                if self.type == "complex":
+                    file.write(struct.pack('<d', value.real))
+                    file.write(struct.pack('<d', value.imag))
+                else:
+                    file.write(struct.pack('<d', value))
 
     def add(self, second_signal):
         if len(self.data) != len(second_signal.data):
@@ -189,3 +195,91 @@ class Signal:
         reversed_second_signal = Signal(second_signal.t1, second_signal.f, second_signal.data[::-1],
                                         second_signal.indexes)
         return self.convolve(reversed_second_signal, id)
+
+    def generate_complex_chart(self, mode):
+        plt.clf()
+        fig, axs = plt.subplots(2)
+        if mode == "W1":
+            axs[0].plot(self.indexes, [value.real for value in self.data])
+            axs[1].plot(self.indexes, [value.imag for value in self.data])
+        elif mode == "W2":
+            axs[0].plot(self.indexes, [abs(value) for value in self.data])
+            axs[1].plot(self.indexes, [np.angle(value) for value in self.data])
+        plt.savefig('complex_chart.png')
+        return plt
+
+    def dft(self):
+        N = len(self.data)
+        X = []
+        for k in range(N):
+            sum = 0
+            for n in range(N):
+                sum += self.data[n] * np.exp(-2j * np.pi * k * n / N)
+            X.append(sum)
+        return Signal(self.t1, self.f, X, self.indexes, "complex", self.id)
+
+    def fft(self):
+        N = len(self.data)
+        if N <= 1:
+            return Signal(self.t1, self.f, self.data, self.indexes, self.type, self.id)
+        else:
+            even_part = Signal(self.t1, self.f, self.data[::2], self.indexes[::2], self.type, self.id)
+            odd_part = Signal(self.t1, self.f, self.data[1::2], self.indexes[1::2], self.type, self.id)
+
+            fft_even = even_part.fft()
+            fft_odd = odd_part.fft()
+
+            combined = [0] * N
+            for i in range(N // 2):
+                t = np.exp(-2j * np.pi * i / N) * fft_odd.data[i]
+                combined[i] = fft_even.data[i] + t
+                combined[i + N // 2] = fft_even.data[i] - t
+
+            return Signal(self.t1, self.f, combined, self.indexes, "complex", self.id)
+
+    def wavelet_transform_db4(self):
+        h0 = 0.4829629131445341
+        h1 = 0.8365163037378079
+        h2 = 0.2241438680420134
+        h3 = -0.1294095225512604
+        g0 = h3
+        g1 = -h2
+        g2 = h1
+        g3 = -h0
+
+        N = len(self.data)
+        if N % 2 != 0:
+            raise ValueError("Długość sygnału musi być parzysta dla transformacji falkowej DB4.")
+
+        approx_data = [0] * (N // 2)
+        detail_data = [0] * (N // 2)
+
+        for i in range(N // 2):
+            approx_data[i] = h0 * self.data[2 * i] + h1 * self.data[2 * i + 1] + h2 * self.data[(2 * i + 2) % N] + h3 * \
+                             self.data[(2 * i + 3) % N]
+            detail_data[i] = g0 * self.data[2 * i] + g1 * self.data[2 * i + 1] + g2 * self.data[(2 * i + 2) % N] + g3 * \
+                             self.data[(2 * i + 3) % N]
+
+        approx_indexes = self.indexes[::2]
+        detail_indexes = self.indexes[::2]
+
+        approx = Signal(self.t1, self.f, approx_data, approx_indexes, self.type, self.id)
+        detail = Signal(self.t1, self.f, detail_data, detail_indexes, self.type, self.id)
+
+        return approx, detail
+
+    def generate_charts(self, mode):
+        plt.clf()
+        fig, axs = plt.subplots(2)
+        if mode == "W1":
+            axs[0].plot(self.indexes, [value.real for value in self.data])
+            axs[0].set_title('Część rzeczywista amplitudy')
+            axs[1].plot(self.indexes, [value.imag for value in self.data])
+            axs[1].set_title('Część urojona amplitudy')
+        elif mode == "W2":
+            axs[0].plot(self.indexes, [abs(value) for value in self.data])
+            axs[0].set_title('Moduł liczby zespolonej')
+            axs[1].plot(self.indexes, [np.angle(value) for value in self.data])
+            axs[1].set_title('Argument liczby zespolonej')
+        plt.savefig('complex_chart.png')
+        return plt
