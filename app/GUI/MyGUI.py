@@ -441,4 +441,6 @@ class MyGUI(QMainWindow):
                 self.signals_objects.append(transformed_signal)
                 self.show_transform_window(title, time, transformed_signal)
             elif self.transformComboBox.currentIndex() == 3:
-                transformed_signal_1, transformed_signal_2, time = op_signal.wavelet_transform_db4()
+                plot, time = op_signal.generate_wavelet_charts()
+                title = 'ID: ' + self.id.__str__()
+                self.show_transform_window(title, time, op_signal)

@@ -1,3 +1,4 @@
+import math
 import struct
 import time
 
@@ -212,12 +213,10 @@ class Signal:
     def dft(self):
         start_time = time.time()
         N = len(self.data)
-        X = []
-        for k in range(N):
-            sum = 0
-            for n in range(N):
-                sum += self.data[n] * np.exp(-2j * np.pi * k * n / N)
-            X.append(sum)
+        X = [0] * N
+        for k in range(0, N):
+            for n in range(0, N):
+                X[k] += self.data[n] * (math.cos(2 * math.pi / N * k * n) - 1j * math.sin(2 * math.pi / N * k * n))
         end_time = time.time()
         return Signal(self.t1, self.f, X, self.indexes, "complex", self.id), end_time - start_time
 
@@ -292,3 +291,15 @@ class Signal:
         plt.tight_layout()
         plt.savefig('complex_chart.png')
         return plt
+
+    def generate_wavelet_charts(self):
+        plt.clf()
+        approx, detail, time = self.wavelet_transform_db4()
+        fig, axs = plt.subplots(2, 1, figsize=(12, 6))
+        axs[0].plot(approx.indexes, [value.real for value in approx.data])
+        axs[0].set_title('Część rzeczywista sygnału')
+        axs[1].plot(detail.indexes, [value.imag for value in detail.data])
+        axs[1].set_title('Część urojona sygnału')
+        plt.tight_layout()
+        plt.savefig('complex_chart.png')
+        return plt, time
