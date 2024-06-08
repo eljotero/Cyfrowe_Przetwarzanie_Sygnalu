@@ -36,7 +36,10 @@ class Signal:
                                                                    range(num_samples)]
             indexes = np.array([t1 + i / f for i in range(len(data))])
             signal = Signal(t1, f, data, indexes, type)
-            signal.generate_data(None)
+            if type == "complex":
+                signal.generate_charts()
+            else:
+                signal.generate_data(None)
             return signal
 
     def save_to_binary_file(self, filename):
@@ -198,17 +201,17 @@ class Signal:
                                         second_signal.indexes)
         return self.convolve(reversed_second_signal, id)
 
-    def generate_complex_chart(self, mode):
-        plt.clf()
-        fig, axs = plt.subplots(2)
-        if mode == "W1":
-            axs[0].plot(self.indexes, [value.real for value in self.data])
-            axs[1].plot(self.indexes, [value.imag for value in self.data])
-        elif mode == "W2":
-            axs[0].plot(self.indexes, [abs(value) for value in self.data])
-            axs[1].plot(self.indexes, [np.angle(value) for value in self.data])
-        plt.savefig('complex_chart.png')
-        return plt
+    # def generate_complex_chart(self, mode):
+    #     plt.clf()
+    #     fig, axs = plt.subplots(2)
+    #     if mode == "W1":
+    #         axs[0].plot(self.indexes, [value.real for value in self.data])
+    #         axs[1].plot(self.indexes, [value.imag for value in self.data])
+    #     elif mode == "W2":
+    #         axs[0].plot(self.indexes, [abs(value) for value in self.data])
+    #         axs[1].plot(self.indexes, [np.angle(value) for value in self.data])
+    #     plt.savefig('complex_chart.png')
+    #     return plt
 
     def dft(self):
         start_time = time.time()

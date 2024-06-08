@@ -396,12 +396,15 @@ class MyGUI(QMainWindow):
             try:
                 signal = Signal.load_from_binary_file(fname[0])
                 signal.id = self.id
-                title = 'ID: ' + (self.id).__str__()
-                self.show_data_window(title, None, signal)
-                self.signals_objects.append(signal)
-                self.signalsComboBox.addItem((self.chart_windows.__len__()).__str__())
-                self.signalsComboBox2.addItem((self.chart_windows.__len__()).__str__())
-                self.samplingComboBox.addItem((self.chart_windows.__len__()).__str__())
+                title = 'ID: ' + self.id.__str__()
+                if signal.type == 'complex':
+                    chart = signal.generate_charts()
+                    self.signals_objects.append(signal)
+                    self.show_transform_window(title, None, signal)
+                else:
+                    chart = signal.generate_charts()
+                    self.signals_objects.append(signal)
+                    self.show_data_window(title, None, signal)
             except Exception as e:
                 print("Error reading file:", e)
 
