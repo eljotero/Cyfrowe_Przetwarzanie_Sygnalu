@@ -1,4 +1,5 @@
 import struct
+import time
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -209,6 +210,7 @@ class Signal:
         return plt
 
     def dft(self):
+        start_time = time.time()
         N = len(self.data)
         X = []
         for k in range(N):
@@ -216,28 +218,32 @@ class Signal:
             for n in range(N):
                 sum += self.data[n] * np.exp(-2j * np.pi * k * n / N)
             X.append(sum)
-        return Signal(self.t1, self.f, X, self.indexes, "complex", self.id)
+        end_time = time.time()
+        return Signal(self.t1, self.f, X, self.indexes, "complex", self.id), end_time - start_time
 
-    def fft(self):
+    def dit_fft(self):
+        start_time = time.time()
         N = len(self.data)
         if N <= 1:
-            return Signal(self.t1, self.f, self.data, self.indexes, self.type, self.id)
+            end_time = time.time()
+            return Signal(self.t1, self.f, self.data, self.indexes, self.type, self.id), end_time - start_time
         else:
             even_part = Signal(self.t1, self.f, self.data[::2], self.indexes[::2], self.type, self.id)
             odd_part = Signal(self.t1, self.f, self.data[1::2], self.indexes[1::2], self.type, self.id)
 
-            fft_even = even_part.fft()
-            fft_odd = odd_part.fft()
+            fft_even, _ = even_part.dit_fft()
+            fft_odd, _ = odd_part.dit_fft()
 
             combined = [0] * N
             for i in range(N // 2):
                 t = np.exp(-2j * np.pi * i / N) * fft_odd.data[i]
                 combined[i] = fft_even.data[i] + t
                 combined[i + N // 2] = fft_even.data[i] - t
-
-            return Signal(self.t1, self.f, combined, self.indexes, "complex", self.id)
+            end_time = time.time()
+            return Signal(self.t1, self.f, combined, self.indexes, "complex", self.id), end_time - start_time
 
     def wavelet_transform_db4(self):
+        start_time = time.time()
         h0 = 0.4829629131445341
         h1 = 0.8365163037378079
         h2 = 0.2241438680420134
@@ -265,21 +271,24 @@ class Signal:
 
         approx = Signal(self.t1, self.f, approx_data, approx_indexes, self.type, self.id)
         detail = Signal(self.t1, self.f, detail_data, detail_indexes, self.type, self.id)
+        end_time = time.time()
+        return approx, detail, end_time - start_time
 
-        return approx, detail
-
-    def generate_charts(self, mode):
+    def generate_charts(self):
         plt.clf()
-        fig, axs = plt.subplots(2)
-        if mode == "W1":
-            axs[0].plot(self.indexes, [value.real for value in self.data])
-            axs[0].set_title('Część rzeczywista amplitudy')
-            axs[1].plot(self.indexes, [value.imag for value in self.data])
-            axs[1].set_title('Część urojona amplitudy')
-        elif mode == "W2":
-            axs[0].plot(self.indexes, [abs(value) for value in self.data])
-            axs[0].set_title('Moduł liczby zespolonej')
-            axs[1].plot(self.indexes, [np.angle(value) for value in self.data])
-            axs[1].set_title('Argument liczby zespolonej')
+        fig, axs = plt.subplots(2, 2)
+        frequencies = np.fft.fftfreq(len(self.data), 1 / self.f)
+        positive_freq_indices = frequencies >= 0
+        frequencies = frequencies[positive_freq_indices]
+        data = np.array(self.data)[positive_freq_indices]
+        axs[0, 0].plot(frequencies, [value.real for value in data])
+        axs[0, 0].set_title('Część rzeczywista amplitudy')
+        axs[0, 1].plot(frequencies, [value.imag for value in data])
+        axs[0, 1].set_title('Część urojona amplitudy')
+        axs[1, 0].plot(frequencies, [abs(value) for value in data])
+        axs[1, 0].set_title('Moduł liczby zespolonej')
+        axs[1, 1].plot(frequencies, [np.angle(value) for value in data])
+        axs[1, 1].set_title('Argument liczby zespolonej')
+        plt.tight_layout()
         plt.savefig('complex_chart.png')
         return plt

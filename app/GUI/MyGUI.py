@@ -20,6 +20,7 @@ from .AnalysisGUI import AnalysisGUI
 from .CompareGUI import CompareGUI
 from .DataGUI import DataGui
 from .SampledGUI import SampledGUI
+from .TransformGUI import TransformGUI
 
 
 class MyGUI(QMainWindow):
@@ -33,6 +34,7 @@ class MyGUI(QMainWindow):
         self.sampled_signals = []
         self.compare_windows = []
         self.sampled_windows = []
+        self.transform_windows = []
         self.comboBox.currentIndexChanged.connect(self.on_combobox_changed)
         self.generateButton.clicked.connect(self.generate_data)
         self.operationButton.clicked.connect(self.operation)
@@ -41,6 +43,7 @@ class MyGUI(QMainWindow):
         self.reconstructionButton.clicked.connect(self.reconstruct_signal)
         self.readFromFileButton.clicked.connect(self.read_from_file)
         self.analysisButton.clicked.connect(self.analysis)
+        self.transformButton.clicked.connect(self.transform)
         self.id = 1
         self.combobox_mapping_line_edit = {
             1: [self.a_line_edit, self.t1_line_edit, self.d_line_edit, self.f_line_edit, self.bins_line_edit],
@@ -147,16 +150,18 @@ class MyGUI(QMainWindow):
                     values, chart1, chart2 = signal.generate_data()
                     title = 'ID: ' + (self.id).__str__()
                     self.signals_objects.append(signal)
-                    self.signalsComboBox.addItem((self.id).__str__())
-                    self.signalsComboBox2.addItem((self.id).__str__())
+                    self.signalsComboBox.addItem(self.id.__str__())
+                    self.signalsComboBox2.addItem(self.id.__str__())
+                    self.transformSignalComboBox.addItem(self.id.__str__())
                     self.show_sampled_window(title, values)
                     return
                 signal = SignalClass(**params, id=self.id)
                 values, chart1, chart2 = signal.generate_data()
                 title = 'ID: ' + (self.id).__str__()
                 self.signals_objects.append(signal)
-                self.signalsComboBox.addItem((self.id).__str__())
-                self.signalsComboBox2.addItem((self.id).__str__())
+                self.signalsComboBox.addItem(self.id.__str__())
+                self.signalsComboBox2.addItem(self.id.__str__())
+                self.transformSignalComboBox.addItem(self.id.__str__())
                 if signal_type not in [12, 13, 14]:
                     self.samplingComboBox.addItem((self.id).__str__())
                 self.show_data_window(title, values, signal)
@@ -185,17 +190,27 @@ class MyGUI(QMainWindow):
         self.sampled_windows.append(sampled_gui)
         sampled_gui.show()
 
+    def show_transform_window(self, title, time, signal):
+        transform_gui = TransformGUI(title, time, signal, parent=self)
+        transform_gui.id = self.id
+        self.id += 1
+        self.transform_windows.append(transform_gui)
+        transform_gui.show()
+
     def remove_chart_window(self, id):
         id_str = str(id)
         index1 = self.signalsComboBox.findText(id_str)
         index2 = self.signalsComboBox2.findText(id_str)
         index3 = self.samplingComboBox.findText(id_str)
+        index4 = self.transformSignalComboBox.findText(id_str)
         if index1 != -1:
             self.signalsComboBox.removeItem(index1)
         if index2 != -1:
             self.signalsComboBox2.removeItem(index2)
         if index3 != -1:
             self.samplingComboBox.removeItem(index3)
+        if index4 != -1:
+            self.transformSignalComboBox.removeItem(index4)
         for i, window in enumerate(self.chart_windows):
             if hasattr(window, 'id') and window.id == id:
                 index_to_remove = i
@@ -226,10 +241,13 @@ class MyGUI(QMainWindow):
             id_str = str(id)
             index1 = self.quantizeSignalComboBox.findText(id_str)
             index2 = self.reconstructionSignalComboBox.findText(id_str)
+            index3 = self.transformSignalComboBox.findText(id_str)
             if index1 != -1:
                 self.quantizeSignalComboBox.removeItem(index1)
             if index2 != -1:
                 self.reconstructionSignalComboBox.removeItem(index2)
+            if index3 != -1:
+                self.transformSignalComboBox.removeItem(index3)
             self.signalsComboBox.removeItem(id)
             self.signalsComboBox2.removeItem(id)
             for i, window in enumerate(self.sampled_windows):
@@ -238,6 +256,15 @@ class MyGUI(QMainWindow):
                     break
             if index_to_remove is not None:
                 self.sampled_windows.pop(index_to_remove)
+
+    def remove_transform_window(self, id):
+        if len(self.transform_windows) > 0:
+            for i, window in enumerate(self.transform_windows):
+                if hasattr(window, 'id') and window.id == id:
+                    index_to_remove = i
+                    break
+            if index_to_remove is not None:
+                self.transform_windows.pop(index_to_remove)
 
     def operation(self):
         if self.signalsComboBox.currentIndex() != 0 and self.signalsComboBox2.currentIndex() != 0:
@@ -277,9 +304,10 @@ class MyGUI(QMainWindow):
             elif self.operationComboBox.currentIndex() == 5:
                 result_signal = op_signal_1.convolve(op_signal_2, self.id)
                 values, chart1, chart2 = result_signal.generate_data()
-                title = 'ID: ' + (self.id).__str__()
+                title = 'ID: ' + self.id.__str__()
                 self.show_sampled_window(title, values)
                 self.signals_objects.append(result_signal)
+                self.transformSignalComboBox.addItem(self.id.__str__())
                 return
             elif self.operationComboBox.currentIndex() == 6:
                 result_signal = op_signal_1.direct_correlation(op_signal_2, self.id)
@@ -287,6 +315,7 @@ class MyGUI(QMainWindow):
                 title = 'ID: ' + (self.id).__str__()
                 self.show_sampled_window(title, values)
                 self.signals_objects.append(result_signal)
+                self.transformSignalComboBox.addItem(self.id.__str__())
                 return
             elif self.operationComboBox.currentIndex() == 7:
                 result_signal = op_signal_1.convolution_correlation(op_signal_2, self.id)
@@ -294,6 +323,7 @@ class MyGUI(QMainWindow):
                 title = 'ID: ' + (self.id).__str__()
                 self.show_sampled_window(title, values)
                 self.signals_objects.append(result_signal)
+                self.transformSignalComboBox.addItem(self.id.__str__())
                 return
             result_signal.id = self.id
             values, chart1, chart2 = result_signal.generate_data(None)
@@ -301,6 +331,7 @@ class MyGUI(QMainWindow):
             self.signalsComboBox.addItem((self.id).__str__())
             self.signalsComboBox2.addItem((self.id).__str__())
             self.samplingComboBox.addItem((self.id).__str__())
+            self.transformSignalComboBox.addItem(self.id.__str__())
             self.show_data_window(title, None, result_signal)
             self.signals_objects.append(result_signal)
         else:
@@ -312,11 +343,12 @@ class MyGUI(QMainWindow):
             op_signal = Signal(signal.t1, signal.f, signal.data, signal.indexes, signal.type)
             new_signal = op_signal.sample(float(self.samplingRate_line_edit.text()), id=self.id)
             values, chart1, chart2 = new_signal.generate_data()
-            title = 'ID: ' + (self.id).__str__()
-            self.signalsComboBox.addItem((self.id).__str__())
-            self.signalsComboBox2.addItem((self.id).__str__())
-            self.quantizeSignalComboBox.addItem((self.id).__str__())
-            self.reconstructionSignalComboBox.addItem((self.id).__str__())
+            title = 'ID: ' + self.id.__str__()
+            self.signalsComboBox.addItem(self.id.__str__())
+            self.signalsComboBox2.addItem(self.id.__str__())
+            self.quantizeSignalComboBox.addItem(self.id.__str__())
+            self.reconstructionSignalComboBox.addItem(self.id.__str__())
+            self.transformSignalComboBox.addItem(self.id.__str__())
             self.sampled_signals.append(new_signal)
             self.signals_objects.append(new_signal)
             self.show_sampled_window(title, values)
@@ -389,3 +421,24 @@ class MyGUI(QMainWindow):
         analysis_gui = AnalysisGUI()
         self.analysis_windows.append(analysis_gui)
         analysis_gui.show()
+
+    def transform(self):
+        if self.transformComboBox.currentIndex() != 0 and self.transformSignalComboBox.currentIndex() != 0:
+            signal = self.find_signal_by_id(int(self.transformSignalComboBox.currentText()))
+            op_signal = Signal(signal.t1, signal.f, signal.data, signal.indexes, signal.type)
+            if self.transformComboBox.currentIndex() == 1:
+                transformed_signal, time = op_signal.dft()
+                title = 'ID: ' + self.id.__str__()
+                transformed_signal.id = self.id
+                chart = transformed_signal.generate_charts()
+                self.signals_objects.append(transformed_signal)
+                self.show_transform_window(title, time, transformed_signal)
+            elif self.transformComboBox.currentIndex() == 2:
+                transformed_signal, time = op_signal.dit_fft()
+                title = 'ID: ' + self.id.__str__()
+                transformed_signal.id = self.id
+                chart = transformed_signal.generate_charts()
+                self.signals_objects.append(transformed_signal)
+                self.show_transform_window(title, time, transformed_signal)
+            elif self.transformComboBox.currentIndex() == 3:
+                transformed_signal_1, transformed_signal_2, time = op_signal.wavelet_transform_db4()

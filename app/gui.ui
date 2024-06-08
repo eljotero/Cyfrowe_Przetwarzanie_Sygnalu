@@ -754,6 +754,77 @@
      <string>Analiza korelacyjna</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_22">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>660</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Przekształcenie</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="transformComboBox">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>660</y>
+      <width>151</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Wybierz rodzaj przekształcenia</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Dyskretna transformacja Fouriera</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Dyskretna transformacja Fouriera z decymacją w dziedzinie czasu</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Transformacja falkowa DB4</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QComboBox" name="transformSignalComboBox">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>660</y>
+      <width>141</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Wybierz id sygnału</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="transformButton">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>660</y>
+      <width>141</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Wykonaj przekształcenie</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
