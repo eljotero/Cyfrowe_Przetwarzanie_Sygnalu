@@ -204,10 +204,11 @@ class Signal:
     def dft(self):
         start_time = time.time()
         N = len(self.data)
-        X = [0] * N
-        for k in range(0, N):
-            for n in range(0, N):
-                X[k] += self.data[n] * (math.cos(2 * math.pi / N * k * n) - 1j * math.sin(2 * math.pi / N * k * n))
+        X = [0.0] * N
+        for k in range(N):
+            for n in range(N):
+                X[k] += self.data[n] * np.exp((-2j * np.pi * k * n) / N)
+            X[k] /= N
         end_time = time.time()
         return Signal(self.t1, self.f, X, self.indexes, "complex", self.id), end_time - start_time
 
@@ -218,19 +219,21 @@ class Signal:
             end_time = time.time()
             return Signal(self.t1, self.f, self.data, self.indexes, self.type, self.id), end_time - start_time
         else:
-            even_part = Signal(self.t1, self.f, self.data[::2], self.indexes[::2], self.type, self.id)
-            odd_part = Signal(self.t1, self.f, self.data[1::2], self.indexes[1::2], self.type, self.id)
+            even_part = Signal(self.t1, self.f, self.data[0::2], self.indexes[0::2], self.type, self.id)
+            odd_part = Signal(self.indexes[1], self.f, self.data[1::2], self.indexes[1::2], self.type, self.id)
 
             fft_even, _ = even_part.dit_fft()
             fft_odd, _ = odd_part.dit_fft()
 
-            combined = [0] * N
-            for i in range(N // 2):
-                t = np.exp(-2j * np.pi * i / N) * fft_odd.data[i]
-                combined[i] = fft_even.data[i] + t
-                combined[i + N // 2] = fft_even.data[i] - t
+            if len(fft_odd.data) < len(fft_even.data):
+                fft_odd.data = np.append(fft_odd.data, [0] * (len(fft_even.data) - len(fft_odd.data)))
+                fft_odd.indexes = np.append(fft_odd.indexes, [0] * (len(fft_even.data) - len(fft_odd.data)))
+
+            T = [np.exp(-2j * np.pi * k / N) * fft_odd.data[k] for k in range(len(fft_even.data))]
+            combined = [fft_even.data[k] + T[k] for k in range(len(fft_even.data))] + \
+                       [fft_even.data[k] - T[k] for k in range(len(fft_even.data))]
             end_time = time.time()
-            return Signal(self.t1, self.f, combined, self.indexes, "complex", self.id), end_time - start_time
+            return Signal(self.t1, self.f, combined, fft_even.indexes, "complex", self.id), end_time - start_time
 
     def wavelet_transform_db4(self):
         start_time = time.time()
@@ -245,7 +248,7 @@ class Signal:
 
         N = len(self.data)
         if N % 2 != 0:
-            raise ValueError("Długość sygnału musi być parzysta dla transformacji falkowej DB4.")
+            raise ValueError("Długość sygnału musi być liczbą parzystą.")
 
         approx_data = [0] * (N // 2)
         detail_data = [0] * (N // 2)
@@ -256,49 +259,42 @@ class Signal:
             detail_data[i] = g0 * self.data[2 * i] + g1 * self.data[2 * i + 1] + g2 * self.data[(2 * i + 2) % N] + g3 * \
                              self.data[(2 * i + 3) % N]
 
-        approx_indexes = self.indexes[::2]
-        detail_indexes = self.indexes[::2]
+        approx_indexes = self.indexes[:N:2]
+        detail_indexes = self.indexes[:N:2]
 
-        combined_data = approx_data + detail_data
-        combined_indexes = approx_indexes + detail_indexes
+        approx_signal = Signal(self.t1, self.f, approx_data, approx_indexes, self.type, self.id)
+        detail_signal = Signal(self.t1, self.f, detail_data, detail_indexes, self.type, self.id)
 
-        result = Signal(self.t1, self.f, combined_data, combined_indexes, self.type, self.id)
         end_time = time.time()
-        return result, end_time - start_time
+        return approx_signal, detail_signal, end_time - start_time
 
     def generate_charts(self):
         plt.clf()
-        frequencies = [self.f * k / len(self.data) for k in range(len(self.data))]
-        real_part = [x.real for x in self.data]
-        imag_part = [x.imag for x in self.data]
-        magnitude = [abs(x) for x in self.data]
-        phase = [math.atan2(x.imag, x.real) for x in self.data]
-
         fig, axs = plt.subplots(2, 2)
-        axs[0, 0].plot(frequencies, real_part, label='Część rzeczywista')
-        axs[0, 0].set_xlabel('Częstotliwość')
-        axs[0, 0].set_ylabel('Amplituda')
+        frequencies = np.fft.fftfreq(len(self.data), 1 / self.f)
+        positive_freq_indices = frequencies >= 0
+        frequencies = frequencies[positive_freq_indices]
+        data = np.array(self.data)[positive_freq_indices]
+        axs[0, 0].plot(frequencies, [value.real for value in data])
         axs[0, 0].set_title('Część rzeczywista amplitudy')
-        axs[0, 0].grid(True)
-
-        axs[0, 1].plot(frequencies, imag_part, label='Część urojona', color='orange')
-        axs[0, 1].set_xlabel('Częstotliwość')
-        axs[0, 1].set_ylabel('Amplituda')
+        axs[0, 1].plot(frequencies, [value.imag for value in data])
         axs[0, 1].set_title('Część urojona amplitudy')
-        axs[0, 1].grid(True)
-
-        axs[1, 0].plot(frequencies, magnitude, label='Moduł')
-        axs[1, 0].set_xlabel('Częstotliwość')
-        axs[1, 0].set_ylabel('Moduł')
+        axs[1, 0].plot(frequencies, [abs(value) for value in data])
         axs[1, 0].set_title('Moduł liczby zespolonej')
-        axs[1, 0].grid(True)
-
-        axs[1, 1].plot(frequencies, phase, label='Argument', color='orange')
-        axs[1, 1].set_xlabel('Częstotliwość')
-        axs[1, 1].set_ylabel('Argument')
+        axs[1, 1].plot(frequencies, [np.angle(value) for value in data])
         axs[1, 1].set_title('Argument liczby zespolonej')
-        axs[1, 1].grid(True)
-
         plt.tight_layout()
         plt.savefig('complex_chart.png')
         return plt
+
+    def generate_falkov_charts(self, second_signal):
+        plt.clf()
+        fig, axs = plt.subplots(1, 2)
+        axs[0].plot(self.indexes, self.data, label='Sygnał 1')
+        axs[1].plot(second_signal.indexes, second_signal.data, label='Sygnał 2')
+        plt.tight_layout()
+        plt.savefig('complex_chart.png')
+        return plt
+
+
+

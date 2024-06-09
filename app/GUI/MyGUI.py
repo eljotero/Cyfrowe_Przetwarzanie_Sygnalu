@@ -428,7 +428,8 @@ class MyGUI(QMainWindow):
     def transform(self):
         if self.transformComboBox.currentIndex() != 0 and self.transformSignalComboBox.currentIndex() != 0:
             signal = self.find_signal_by_id(int(self.transformSignalComboBox.currentText()))
-            op_signal = Signal(signal.t1, signal.f, signal.data, signal.indexes, signal.type)
+            op_signal = Signal(0, signal.f, signal.data,
+                               signal.indexes, None)
             if self.transformComboBox.currentIndex() == 1:
                 transformed_signal, time = op_signal.dft()
                 title = 'ID: ' + self.id.__str__()
@@ -444,9 +445,12 @@ class MyGUI(QMainWindow):
                 self.signals_objects.append(transformed_signal)
                 self.show_transform_window(title, time, transformed_signal)
             elif self.transformComboBox.currentIndex() == 3:
-                transformed_signal, time = op_signal.wavelet_transform_db4()
+                transformed_signal_1, transformed_signal_2, time = op_signal.wavelet_transform_db4()
                 title = 'ID: ' + self.id.__str__()
-                transformed_signal.id = self.id
-                chart = transformed_signal.generate_charts()
-                self.signals_objects.append(transformed_signal)
-                self.show_transform_window(title, time, transformed_signal)
+                transformed_signal_1.id = self.id
+                self.id = self.id + 1
+                transformed_signal_2.id = self.id
+                chart = transformed_signal_1.generate_falkov_charts(transformed_signal_2)
+                self.signals_objects.append(transformed_signal_1)
+                self.signals_objects.append(transformed_signal_2)
+                self.show_transform_window(title, time, transformed_signal_1)
