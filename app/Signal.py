@@ -201,18 +201,6 @@ class Signal:
                                         second_signal.indexes)
         return self.convolve(reversed_second_signal, id)
 
-    # def generate_complex_chart(self, mode):
-    #     plt.clf()
-    #     fig, axs = plt.subplots(2)
-    #     if mode == "W1":
-    #         axs[0].plot(self.indexes, [value.real for value in self.data])
-    #         axs[1].plot(self.indexes, [value.imag for value in self.data])
-    #     elif mode == "W2":
-    #         axs[0].plot(self.indexes, [abs(value) for value in self.data])
-    #         axs[1].plot(self.indexes, [np.angle(value) for value in self.data])
-    #     plt.savefig('complex_chart.png')
-    #     return plt
-
     def dft(self):
         start_time = time.time()
         N = len(self.data)
@@ -271,38 +259,46 @@ class Signal:
         approx_indexes = self.indexes[::2]
         detail_indexes = self.indexes[::2]
 
-        approx = Signal(self.t1, self.f, approx_data, approx_indexes, self.type, self.id)
-        detail = Signal(self.t1, self.f, detail_data, detail_indexes, self.type, self.id)
+        combined_data = approx_data + detail_data
+        combined_indexes = approx_indexes + detail_indexes
+
+        result = Signal(self.t1, self.f, combined_data, combined_indexes, self.type, self.id)
         end_time = time.time()
-        return approx, detail, end_time - start_time
+        return result, end_time - start_time
 
     def generate_charts(self):
         plt.clf()
+        frequencies = [self.f * k / len(self.data) for k in range(len(self.data))]
+        real_part = [x.real for x in self.data]
+        imag_part = [x.imag for x in self.data]
+        magnitude = [abs(x) for x in self.data]
+        phase = [math.atan2(x.imag, x.real) for x in self.data]
+
         fig, axs = plt.subplots(2, 2)
-        frequencies = np.fft.fftfreq(len(self.data), 1 / self.f)
-        positive_freq_indices = frequencies >= 0
-        frequencies = frequencies[positive_freq_indices]
-        data = np.array(self.data)[positive_freq_indices]
-        axs[0, 0].plot(frequencies, [value.real for value in data])
+        axs[0, 0].plot(frequencies, real_part, label='Część rzeczywista')
+        axs[0, 0].set_xlabel('Częstotliwość')
+        axs[0, 0].set_ylabel('Amplituda')
         axs[0, 0].set_title('Część rzeczywista amplitudy')
-        axs[0, 1].plot(frequencies, [value.imag for value in data])
+        axs[0, 0].grid(True)
+
+        axs[0, 1].plot(frequencies, imag_part, label='Część urojona', color='orange')
+        axs[0, 1].set_xlabel('Częstotliwość')
+        axs[0, 1].set_ylabel('Amplituda')
         axs[0, 1].set_title('Część urojona amplitudy')
-        axs[1, 0].plot(frequencies, [abs(value) for value in data])
+        axs[0, 1].grid(True)
+
+        axs[1, 0].plot(frequencies, magnitude, label='Moduł')
+        axs[1, 0].set_xlabel('Częstotliwość')
+        axs[1, 0].set_ylabel('Moduł')
         axs[1, 0].set_title('Moduł liczby zespolonej')
-        axs[1, 1].plot(frequencies, [np.angle(value) for value in data])
+        axs[1, 0].grid(True)
+
+        axs[1, 1].plot(frequencies, phase, label='Argument', color='orange')
+        axs[1, 1].set_xlabel('Częstotliwość')
+        axs[1, 1].set_ylabel('Argument')
         axs[1, 1].set_title('Argument liczby zespolonej')
+        axs[1, 1].grid(True)
+
         plt.tight_layout()
         plt.savefig('complex_chart.png')
         return plt
-
-    def generate_wavelet_charts(self):
-        plt.clf()
-        approx, detail, time = self.wavelet_transform_db4()
-        fig, axs = plt.subplots(2, 1, figsize=(12, 6))
-        axs[0].plot(approx.indexes, [value.real for value in approx.data])
-        axs[0].set_title('Część rzeczywista sygnału')
-        axs[1].plot(detail.indexes, [value.imag for value in detail.data])
-        axs[1].set_title('Część urojona sygnału')
-        plt.tight_layout()
-        plt.savefig('complex_chart.png')
-        return plt, time
