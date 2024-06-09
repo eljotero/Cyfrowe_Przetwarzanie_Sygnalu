@@ -290,8 +290,8 @@ class Signal:
     def generate_falkov_charts(self, second_signal):
         plt.clf()
         fig, axs = plt.subplots(1, 2)
-        axs[0].plot(self.indexes, self.data, label='Sygnał 1')
-        axs[1].plot(second_signal.indexes, second_signal.data, label='Sygnał 2')
+        axs[0].plot(self.indexes, self.data)
+        axs[1].plot(second_signal.indexes, second_signal.data)
         plt.tight_layout()
         plt.savefig('complex_chart.png')
         return plt
