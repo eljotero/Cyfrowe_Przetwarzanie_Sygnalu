@@ -1,4 +1,3 @@
-import math
 import struct
 import time
 
@@ -204,13 +203,12 @@ class Signal:
     def dft(self):
         start_time = time.time()
         N = len(self.data)
-        X = [0.0] * N
+        result_data = [0] * N
         for k in range(N):
             for n in range(N):
-                X[k] += self.data[n] * np.exp((-2j * np.pi * k * n) / N)
-            X[k] /= N
+                result_data[k] += self.data[n] * np.exp(-2j * np.pi * k * n / N)
         end_time = time.time()
-        return Signal(self.t1, self.f, X, self.indexes, "complex", self.id), end_time - start_time
+        return Signal(self.t1, self.f, result_data, self.indexes, "complex", self.id), end_time - start_time
 
     def dit_fft(self):
         start_time = time.time()
@@ -232,8 +230,9 @@ class Signal:
             T = [np.exp(-2j * np.pi * k / N) * fft_odd.data[k] for k in range(len(fft_even.data))]
             combined = [fft_even.data[k] + T[k] for k in range(len(fft_even.data))] + \
                        [fft_even.data[k] - T[k] for k in range(len(fft_even.data))]
+            combined = [value / N for value in combined]
             end_time = time.time()
-            return Signal(self.t1, self.f, combined, fft_even.indexes, "complex", self.id), end_time - start_time
+            return Signal(self.t1, self.f, combined, self.indexes, "complex", self.id), end_time - start_time
 
     def wavelet_transform_db4(self):
         start_time = time.time()
@@ -295,6 +294,3 @@ class Signal:
         plt.tight_layout()
         plt.savefig('complex_chart.png')
         return plt
-
-
-

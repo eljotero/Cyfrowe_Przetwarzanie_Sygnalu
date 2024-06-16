@@ -397,6 +397,7 @@ class MyGUI(QMainWindow):
                 signal = Signal.load_from_binary_file(fname[0])
                 signal.id = self.id
                 title = 'ID: ' + self.id.__str__()
+                self.transformSignalComboBox.addItem(self.id.__str__())
                 if signal.type == 'complex':
                     chart = signal.generate_charts()
                     self.signals_objects.append(signal)
@@ -431,12 +432,13 @@ class MyGUI(QMainWindow):
             op_signal = Signal(0, signal.f, signal.data,
                                signal.indexes, None)
             if self.transformComboBox.currentIndex() == 1:
-                transformed_signal, time = op_signal.dft()
+                transformed_signal_2, time_value = op_signal.dft()
+                transformed_signal, time = op_signal.dit_fft()
                 title = 'ID: ' + self.id.__str__()
                 transformed_signal.id = self.id
                 chart = transformed_signal.generate_charts()
                 self.signals_objects.append(transformed_signal)
-                self.show_transform_window(title, time, transformed_signal)
+                self.show_transform_window(title, time_value, transformed_signal)
             elif self.transformComboBox.currentIndex() == 2:
                 transformed_signal, time = op_signal.dit_fft()
                 title = 'ID: ' + self.id.__str__()
